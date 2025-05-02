@@ -4,19 +4,24 @@ import folium
 import json
 import tempfile
 import streamlit as st
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+import streamlit as st
+import tempfile
 
-# ✅ Authenticate using service account from Streamlit secrets
+# Use service account from secrets
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
         key_path = f.name
-    credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
+
+    credentials = ee.ServiceAccountCredentials(
+        st.secrets["earthengine"]["service_account"],
+        key_path
+    )
     ee.Initialize(credentials)
 except Exception as e:
-    st.error("Earth Engine authentication failed. Please check your Streamlit secrets.")
+    st.error("Earth Engine initialization failed. Check Streamlit secrets.")
     st.stop()
+
 
 # ✅ Set up Streamlit layout
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
