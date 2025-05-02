@@ -123,8 +123,8 @@ if STREAMLIT_MODE and run_analysis:
 
     with right_col:
         st.markdown("### Heat Map Viewer")
-        with st.expander("Map Layers", expanded=True):
-        show_lst = st.checkbox("Show LST", value=True)
+                with st.expander("Map Layers", expanded=True):
+            show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Layer Opacity", 0.0, 1.0, 0.6, key='layer_lst_opacity')
         show_utfvi = st.checkbox("Show UTFVI", value=True)
         utfvi_opacity = st.slider("UTFVI Layer Opacity", 0.0, 1.0, 0.6, key='layer_utfvi_opacity')
@@ -142,8 +142,7 @@ if STREAMLIT_MODE and run_analysis:
                 'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
                 'opacity': utfvi_opacity
             }, 'UTFVI')
-
-                Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
     with left_col.expander("Analysis Summary", expanded=True):
         st.write("### Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
