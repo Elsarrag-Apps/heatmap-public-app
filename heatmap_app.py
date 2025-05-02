@@ -124,25 +124,26 @@ if STREAMLIT_MODE and run_analysis:
     with right_col:
     st.markdown("### Heat Map Viewer")
     with st.expander("Map Layers", expanded=True):
-            show_lst = st.checkbox("Show LST", value=True)
+        show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Layer Opacity", 0.0, 1.0, 0.6, key='layer_lst_opacity')
         show_utfvi = st.checkbox("Show UTFVI", value=True)
         utfvi_opacity = st.slider("UTFVI Layer Opacity", 0.0, 1.0, 0.6, key='layer_utfvi_opacity')
 
-        if show_lst:
-            Map.addLayer(lst.clip(aoi), {
-                'min': 0, 'max': 56,
-                'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': lst_opacity
-            }, 'LST (°C)')
+    if show_lst:
+        Map.addLayer(lst.clip(aoi), {
+            'min': 0, 'max': 56,
+            'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
+            'opacity': lst_opacity
+        }, 'LST (°C)')
 
-        if show_utfvi:
-            Map.addLayer(utfvi.clip(aoi), {
-                'min': -0.4, 'max': 0.4,
-                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': utfvi_opacity
-            }, 'UTFVI')
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+    if show_utfvi:
+        Map.addLayer(utfvi.clip(aoi), {
+            'min': -0.4, 'max': 0.4,
+            'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
+            'opacity': utfvi_opacity
+        }, 'UTFVI')
+
+    Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
     with left_col.expander("Analysis Summary", expanded=True):
         st.write("### Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
