@@ -6,6 +6,7 @@ import tempfile
 import streamlit as st
 import streamlit as st
 import tempfile
+from geopy.geocoders import Nominatim
 
 # Use service account from secrets
 try:
