@@ -4,30 +4,23 @@ import folium
 import json
 import tempfile
 import streamlit as st
-import streamlit as st
-import tempfile
 from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 
-# Use service account from secrets
+# Earth Engine auth using Streamlit secrets
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
         key_path = f.name
-
-    credentials = ee.ServiceAccountCredentials(
-        st.secrets["earthengine"]["service_account"],
-        key_path
-    )
+    credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
     ee.Initialize(credentials)
 except Exception as e:
     st.error("Earth Engine initialization failed. Check Streamlit secrets.")
     st.stop()
 
-
-# ✅ Set up Streamlit layout
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
-# 🔷 Top logos
+# Logos
 st.markdown("""
 <style>
 .top-container {
@@ -47,19 +40,19 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ Split UI into two columns
+# Layout
 left_col, right_col = st.columns([1, 2])
 
 with left_col:
     postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
-    buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500, key='input_buffer')
-    selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key='input_year')
-    date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key='input_season')
-    cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20, key='input_cloud')
+    buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500)
+    selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)])
+    date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'])
+    cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20)
     run_analysis = st.button("Run Analysis")
 
+# Geocoding helper
 geolocator = Nominatim(user_agent="geoapi")
-
 def geocode_with_retry(postcode, retries=3):
     for i in range(retries):
         try:
@@ -69,7 +62,7 @@ def geocode_with_retry(postcode, retries=3):
                 raise
             continue
 
-# Run analysis once
+# Run analysis only once
 if run_analysis:
     location = geocode_with_retry(postcode)
     if location is None:
@@ -114,54 +107,62 @@ if run_analysis:
     utfvi = lst.subtract(ee.Image.constant(lst_mean)).divide(lst).rename('UTFVI')
     utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), aoi, 30).get('UTFVI')
 
-    def classify_utfvi(value):
-        if value <= 0:
-            return "Excellent"
-        elif value <= 0.005:
-            return "Good"
-        elif value <= 0.015:
-            return "Moderate"
-        elif value <= 0.025:
-            return "Poor"
-        else:
-            return "Ecological Risk"
+    # Store in session state
+    st.session_state.map_center = [lat, lon]
+    st.session_state.lst = lst.clip(aoi)
+    st.session_state.utfvi = utfvi.clip(aoi)
+    st.session_state.ndvi_mean = ndvi_mean.getInfo()
+    st.session_state.lst_mean = lst_mean.getInfo()
+    st.session_state.utfvi_mean = utfvi_mean.getInfo()
+    st.session_state.utfvi_class = (
+        "Excellent" if st.session_state.utfvi_mean <= 0 else
+        "Good" if st.session_state.utfvi_mean <= 0.005 else
+        "Moderate" if st.session_state.utfvi_mean <= 0.015 else
+        "Poor" if st.session_state.utfvi_mean <= 0.025 else
+        "Ecological Risk"
+    )
 
-    with right_col:
-        st.markdown("### Heat Map Viewer")
+# Always render map and controls
+with right_col:
+    st.markdown("### Heat Map Viewer")
 
-        # Map and layers
-        Map = geemap.Map(center=[lat, lon], zoom=16, basemap='SATELLITE')
+    Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
+
+    if "map_center" in st.session_state:
+        Map.set_center(st.session_state.map_center[1], st.session_state.map_center[0], 16)
         Map.add_child(folium.Marker(
-            location=[lat, lon],
+            location=st.session_state.map_center,
             icon=folium.Icon(color='red', icon='tint', prefix='fa'),
             popup=f"Postcode: {postcode}"
         ))
 
-        # Layer controls
-        show_lst = st.checkbox("Show LST", value=True)
-        lst_opacity = st.slider("LST Layer Opacity", 0.0, 1.0, 0.6, key='lst_opacity')
-        show_utfvi = st.checkbox("Show UTFVI", value=True)
-        utfvi_opacity = st.slider("UTFVI Layer Opacity", 0.0, 1.0, 0.6, key='utfvi_opacity')
+    # Layer controls
+    show_lst = st.checkbox("Show LST", value=True)
+    lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6)
+    show_utfvi = st.checkbox("Show UTFVI", value=True)
+    utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6)
 
-        if show_lst:
-            Map.addLayer(lst.clip(aoi), {
-                'min': 0, 'max': 56,
-                'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': lst_opacity
-            }, 'LST (°C)')
+    if "lst" in st.session_state and show_lst:
+        Map.addLayer(st.session_state.lst, {
+            'min': 0, 'max': 56,
+            'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
+            'opacity': lst_opacity
+        }, 'LST')
 
-        if show_utfvi:
-            Map.addLayer(utfvi.clip(aoi), {
-                'min': -0.4, 'max': 0.4,
-                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': utfvi_opacity
-            }, 'UTFVI')
+    if "utfvi" in st.session_state and show_utfvi:
+        Map.addLayer(st.session_state.utfvi, {
+            'min': -0.4, 'max': 0.4,
+            'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
+            'opacity': utfvi_opacity
+        }, 'UTFVI')
 
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+    Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
-    with left_col.expander("Analysis Summary", expanded=True):
-        st.write("### Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
-        st.write("### Mean LST: {:.2f} °C".format(lst_mean.getInfo()))
-        st.write("### Mean UTFVI: {:.4f}".format(utfvi_mean.getInfo()))
-        st.write("### Ecological Class: {}".format(classify_utfvi(utfvi_mean.getInfo())))
+# Summary always shows if data exists
+with left_col.expander("Analysis Summary", expanded=True):
+    if "ndvi_mean" in st.session_state:
+        st.write("### Mean NDVI: {:.2f}".format(st.session_state.ndvi_mean))
+        st.write("### Mean LST: {:.2f} °C".format(st.session_state.lst_mean))
+        st.write("### Mean UTFVI: {:.4f}".format(st.session_state.utfvi_mean))
+        st.write("### Ecological Class: {}".format(st.session_state.utfvi_class))
         st.write("(Higher UTFVI = more ecological stress)")
