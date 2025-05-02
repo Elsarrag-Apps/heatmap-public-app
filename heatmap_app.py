@@ -5,14 +5,12 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 import streamlit as st
 import json
+from google.oauth2 import service_account
 
-# Authenticate Earth Engine using service account in Streamlit Secrets
 service_account_info = json.loads(st.secrets["earthengine"]["private_key"])
-credentials = ee.ServiceAccountCredentials(
-    st.secrets["earthengine"]["service_account"],
-    service_account_info
-)
+credentials = service_account.Credentials.from_service_account_info(service_account_info)
 ee.Initialize(credentials)
+
 
 # Streamlit App
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
