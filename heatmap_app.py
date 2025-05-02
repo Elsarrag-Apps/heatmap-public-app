@@ -11,16 +11,19 @@ except ModuleNotFoundError:
     print("Streamlit not found. Running in Jupyter fallback mode.")
     STREAMLIT_MODE = False
 
-# Initialize Earth Engine
-try:
-    import json
+# Initialize Earth Engine from secrets using temp file
+import json
+import tempfile
 
-    service_account_info = json.loads(st.secrets["earthengine"]["private_key"])
-    credentials = ee.ServiceAccountCredentials(
-        st.secrets["earthengine"]["service_account"],
-        service_account_info
-    )
-    ee.Initialize(credentials)
+with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".json") as f:
+    json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
+    key_path = f.name
+
+credentials = ee.ServiceAccountCredentials(
+    st.secrets["earthengine"]["service_account"],
+    key_path
+)
+ee.Initialize(credentials)
 except Exception as e:
     ee.Authenticate()
     ee.Initialize()
@@ -160,4 +163,3 @@ if not STREAMLIT_MODE:
     print("(Higher UTFVI = more ecological stress)")
     Map.add_child(folium.LayerControl())
     display(Map)
-
