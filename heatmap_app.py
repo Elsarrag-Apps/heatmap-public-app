@@ -7,20 +7,20 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
-# Earth Engine auth
+# Earth Engine authentication using Streamlit secrets
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
         key_path = f.name
     credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
     ee.Initialize(credentials)
-except Exception:
+except Exception as e:
     st.error("Earth Engine authentication failed. Check Streamlit secrets.")
     st.stop()
 
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
-# Logos
+# Top logos
 st.markdown("""
 <style>
 .top-container {
@@ -40,9 +40,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Layout
 left_col, right_col = st.columns([1, 2])
 
-# UI controls
 with left_col:
     postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
     buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500)
@@ -52,6 +52,7 @@ with left_col:
     run_analysis = st.button("Run Analysis")
 
 geolocator = Nominatim(user_agent="geoapi")
+
 def geocode_with_retry(postcode, retries=3):
     for i in range(retries):
         try:
@@ -83,36 +84,31 @@ if run_analysis:
         .filterDate(start_date, end_date) \
         .filterBounds(aoi) \
         .map(cloud_mask) \
-        .filter(ee.Filter.lt('CLOUD_COVER', cloud_cover))
+        .filter(ee.Filter.lt('CLOUD_COVER', cloud_cover)) \
+        .mean()
 
-    composite = IC.mean()
-
-    # RGB Satellite
-    satellite_rgb = IC.select(['B4', 'B3', 'B2']).mean()
-    st.session_state.rgb = satellite_rgb.clip(aoi)
-
-    ndvi = composite.normalizedDifference(['B5', 'B4']).rename('NDVI')
+    ndvi = IC.normalizedDifference(['B5', 'B4']).rename('NDVI')
     ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), aoi, 30)
     ndvi_mean = ee.Number(ndvi_stats.get('NDVI_mean'))
-    thermal = composite.select('B10')
     ndvi_min = ee.Number(ndvi_stats.get('NDVI_min'))
     ndvi_max = ee.Number(ndvi_stats.get('NDVI_max'))
 
+    thermal = IC.select('B10')
     fv = ndvi.subtract(ndvi_min).divide(ndvi_max.subtract(ndvi_min)).pow(2).rename('FV')
     em = fv.multiply(0.004).add(0.986).rename('EM')
 
     lst = thermal.expression(
         '(tb / (1 + (0.00115 * (tb / 0.4836)) * log(em))) - 273.15',
-        {'tb': thermal, 'em': em}
+        {'tb': thermal.select('B10'), 'em': em}
     ).rename('LST')
     lst_mean = lst.reduceRegion(ee.Reducer.mean(), aoi, 30).get('LST')
 
     utfvi = lst.subtract(ee.Image.constant(lst_mean)).divide(lst).rename('UTFVI')
     utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), aoi, 30).get('UTFVI')
 
+    st.session_state.map_center = [lat, lon]
     st.session_state.lst = lst
     st.session_state.utfvi = utfvi
-    st.session_state.map_center = [lat, lon]
     st.session_state.ndvi_mean = ndvi_mean.getInfo()
     st.session_state.lst_mean = lst_mean.getInfo()
     st.session_state.utfvi_mean = utfvi_mean.getInfo()
@@ -125,9 +121,10 @@ if run_analysis:
         "Worst"
     )
 
+# Always-visible map viewer
 with right_col:
     st.markdown("### Heat Map Viewer")
-    Map = geemap.Map(center=[51.5, -0.1], zoom=10)
+    Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
     if "map_center" in st.session_state:
         Map.set_center(st.session_state.map_center[1], st.session_state.map_center[0], 16)
@@ -137,17 +134,11 @@ with right_col:
             popup=f"Postcode: {postcode}"
         ))
 
-    show_rgb = st.checkbox("Show Satellite Background", value=True)
-    show_lst = st.checkbox("Show LST Classes", value=True)
+    # Layer controls
+    show_lst = st.checkbox("Show LST", value=True)
     lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6)
-    show_utfvi = st.checkbox("Show UTFVI Classes", value=True)
+    show_utfvi = st.checkbox("Show UTFVI", value=True)
     utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6)
-
-    if "rgb" in st.session_state and show_rgb:
-        Map.addLayer(st.session_state.rgb, {
-            'min': 0.05, 'max': 0.3,
-            'bands': ['B4', 'B3', 'B2']
-        }, 'Landsat 8 RGB Background')
 
     if "lst" in st.session_state and show_lst:
         classified_lst = st.session_state.lst \
