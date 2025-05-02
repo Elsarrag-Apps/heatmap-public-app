@@ -4,13 +4,14 @@ import folium
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 import ee
+import json
 import streamlit as st
 import tempfile
-import json
+import ee
 
-# Write private key to temp file
+# Convert TOML string to JSON dict → write to file → use with EE
 with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".json") as f:
-    f.write(st.secrets["earthengine"]["private_key"])
+    json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
     key_path = f.name
 
 credentials = ee.ServiceAccountCredentials(
@@ -18,6 +19,7 @@ credentials = ee.ServiceAccountCredentials(
     key_path
 )
 ee.Initialize(credentials)
+
 
 
 
