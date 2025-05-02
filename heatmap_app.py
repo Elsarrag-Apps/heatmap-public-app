@@ -7,7 +7,7 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
-# EE Authentication
+# Earth Engine auth
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
@@ -42,6 +42,7 @@ st.markdown("""
 
 left_col, right_col = st.columns([1, 2])
 
+# UI controls
 with left_col:
     postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
     buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500)
@@ -85,7 +86,10 @@ if run_analysis:
         .filter(ee.Filter.lt('CLOUD_COVER', cloud_cover))
 
     composite = IC.mean()
-    rgb = IC.select(['B4', 'B3', 'B2']).mean()
+
+    # RGB Satellite
+    satellite_rgb = IC.select(['B4', 'B3', 'B2']).mean()
+    st.session_state.rgb = satellite_rgb.clip(aoi)
 
     ndvi = composite.normalizedDifference(['B5', 'B4']).rename('NDVI')
     ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), aoi, 30)
@@ -106,11 +110,8 @@ if run_analysis:
     utfvi = lst.subtract(ee.Image.constant(lst_mean)).divide(lst).rename('UTFVI')
     utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), aoi, 30).get('UTFVI')
 
-    # Save for display
     st.session_state.lst = lst
     st.session_state.utfvi = utfvi
-    st.session_state.rgb = rgb.clip(aoi)
-    st.session_state.aoi = aoi
     st.session_state.map_center = [lat, lon]
     st.session_state.ndvi_mean = ndvi_mean.getInfo()
     st.session_state.lst_mean = lst_mean.getInfo()
@@ -135,11 +136,8 @@ with right_col:
             icon=folium.Icon(color='red', icon='tint', prefix='fa'),
             popup=f"Postcode: {postcode}"
         ))
-        if "aoi" in st.session_state:
-            Map.addLayer(st.session_state.aoi, {'color': 'red'}, 'AOI Buffer')
 
-    # Layer controls
-    show_rgb = st.checkbox("Show Satellite", value=True)
+    show_rgb = st.checkbox("Show Satellite Background", value=True)
     show_lst = st.checkbox("Show LST Classes", value=True)
     lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6)
     show_utfvi = st.checkbox("Show UTFVI Classes", value=True)
@@ -149,7 +147,7 @@ with right_col:
         Map.addLayer(st.session_state.rgb, {
             'min': 0.05, 'max': 0.3,
             'bands': ['B4', 'B3', 'B2']
-        }, 'Landsat RGB')
+        }, 'Landsat 8 RGB Background')
 
     if "lst" in st.session_state and show_lst:
         classified_lst = st.session_state.lst \
@@ -162,6 +160,7 @@ with right_col:
             .where(st.session_state.lst.gt(50), 6)
 
         lst_palette = ['#08306B', '#2171B5', '#41AB5D', '#D9F0A3', '#FECC5C', '#FD8D3C', '#E31A1C']
+
         Map.addLayer(classified_lst, {
             'min': 0, 'max': 6,
             'palette': lst_palette,
@@ -178,6 +177,7 @@ with right_col:
             .where(st.session_state.utfvi.gt(0.02), 5)
 
         utfvi_palette = ['#08306B', '#31A354', '#FFFF66', '#FDAE61', '#F03B20', '#BD0026']
+
         Map.addLayer(classified_utfvi, {
             'min': 0, 'max': 5,
             'palette': utfvi_palette,
@@ -186,6 +186,7 @@ with right_col:
 
     Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
+# Summary Panel
 with left_col.expander("Analysis Summary", expanded=True):
     if "ndvi_mean" in st.session_state:
         st.write(f"### Mean NDVI: {st.session_state.ndvi_mean:.2f}")
