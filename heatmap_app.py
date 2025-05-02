@@ -24,9 +24,7 @@ credentials = ee.ServiceAccountCredentials(
     key_path
 )
 ee.Initialize(credentials)
-except Exception as e:
-    ee.Authenticate()
-    ee.Initialize()
+
 
 # Default parameters
 postcode = 'SW1A 1AA'
