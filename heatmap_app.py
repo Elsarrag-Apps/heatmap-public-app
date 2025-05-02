@@ -122,8 +122,8 @@ if STREAMLIT_MODE and run_analysis:
             return "Ecological Risk"
 
     with right_col:
-        st.markdown("### Heat Map Viewer")
-                with st.expander("Map Layers", expanded=True):
+    st.markdown("### Heat Map Viewer")
+    with st.expander("Map Layers", expanded=True):
             show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Layer Opacity", 0.0, 1.0, 0.6, key='layer_lst_opacity')
         show_utfvi = st.checkbox("Show UTFVI", value=True)
