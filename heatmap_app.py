@@ -5,17 +5,20 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 import ee
 import streamlit as st
-import json
 import tempfile
+import json
 
-# Write the service account key to a temp file
-with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".json") as tmp:
-    tmp.write(st.secrets["earthengine"]["private_key"])
-    tmp.flush()
-    service_account_email = st.secrets["earthengine"]["service_account"]
-    credentials = ee.ServiceAccountCredentials(service_account_email, tmp.name)
+# Write private key to temp file
+with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".json") as f:
+    f.write(st.secrets["earthengine"]["private_key"])
+    key_path = f.name
 
+credentials = ee.ServiceAccountCredentials(
+    st.secrets["earthengine"]["service_account"],
+    key_path
+)
 ee.Initialize(credentials)
+
 
 
 
