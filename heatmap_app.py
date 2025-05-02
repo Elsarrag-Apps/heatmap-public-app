@@ -142,4 +142,33 @@ if STREAMLIT_MODE and run_analysis:
 
         if show_lst:
             Map.addLayer(lst.clip(aoi), {
-                'min': 0, 'max'
+                'min': 0, 'max': 56,
+                'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
+                'opacity': lst_opacity
+            }, 'LST (°C)')
+
+        if show_utfvi:
+            Map.addLayer(utfvi.clip(aoi), {
+                'min': -0.4, 'max': 0.4,
+                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
+                'opacity': utfvi_opacity
+            }, 'UTFVI')
+
+        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+
+    with st.expander("Analysis Summary"):
+        st.write("### Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
+        st.write("### Mean LST: {:.2f} °C".format(lst_mean.getInfo()))
+        st.write("### Mean UTFVI: {:.4f}".format(utfvi_mean.getInfo()))
+        st.write("### Ecological Class: {}".format(classify_utfvi(utfvi_mean.getInfo())))
+        st.write("(Higher UTFVI = more ecological stress)")
+
+if not STREAMLIT_MODE:
+    print("Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
+    print("Mean LST: {:.2f} °C".format(lst_mean.getInfo()))
+    print("Mean UTFVI: {:.4f}".format(utfvi_mean.getInfo()))
+    print("Ecological Class: {}".format(classify_utfvi(utfvi_mean.getInfo())))
+    print("(Higher UTFVI = more ecological stress)")
+    Map.add_child(folium.LayerControl())
+    display(Map)
+
