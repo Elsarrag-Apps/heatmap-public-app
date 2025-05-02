@@ -3,19 +3,22 @@ import geemap.foliumap as geemap
 import folium
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+
 import json
+import streamlit as st
 import tempfile
 import ee
-import streamlit as st
 
-with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".json") as f:
-    json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
+# Safely write private key to a temp .json file
+service_account = st.secrets["earthengine"]["service_account"]
+private_key_dict = json.loads(st.secrets["earthengine"]["private_key"])
+
+with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
+    json.dump(private_key_dict, f)
     key_path = f.name
 
-credentials = ee.ServiceAccountCredentials(
-    st.secrets["earthengine"]["service_account"],
-    key_path  # ✅ filepath, not dict
-)
+# Initialize Earth Engine using the correct filepath
+credentials = ee.ServiceAccountCredentials(service_account, key_path)
 ee.Initialize(credentials)
 
 
