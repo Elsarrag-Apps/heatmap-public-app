@@ -5,11 +5,14 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 import streamlit as st
 import json
-from google.oauth2 import service_account
+import ee
+from google.auth.transport.requests import Request
+from ee.oauth import ServiceAccountCredentials
 
 service_account_info = json.loads(st.secrets["earthengine"]["private_key"])
-credentials = service_account.Credentials.from_service_account_info(service_account_info)
+credentials = ServiceAccountCredentials.from_service_account_info(service_account_info)
 ee.Initialize(credentials)
+
 
 
 # Streamlit App
