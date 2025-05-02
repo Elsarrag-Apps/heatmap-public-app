@@ -87,11 +87,7 @@ if run_analysis:
         .filter(ee.Filter.lt('CLOUD_COVER', cloud_cover)) \
         .mean()
    
-    Map.addLayer(satellite_rgb.clip(aoi), {
-    'min': 0.05, 'max': 0.3,
-    'bands': ['B4', 'B3', 'B2']
-}, 'Landsat 8 RGB Background')
-    
+      
     ndvi = IC.normalizedDifference(['B5', 'B4']).rename('NDVI')
     ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), aoi, 30)
     ndvi_mean = ee.Number(ndvi_stats.get('NDVI_mean'))
