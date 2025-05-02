@@ -6,11 +6,12 @@ from geopy.exc import GeocoderTimedOut
 import streamlit as st
 import json
 import ee
-from google.auth.transport.requests import Request
-from ee.oauth import ServiceAccountCredentials
 
 service_account_info = json.loads(st.secrets["earthengine"]["private_key"])
-credentials = ServiceAccountCredentials.from_service_account_info(service_account_info)
+credentials = ee.ServiceAccountCredentials(
+    st.secrets["earthengine"]["service_account"],
+    service_account_info
+)
 ee.Initialize(credentials)
 
 
