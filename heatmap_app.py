@@ -3,22 +3,21 @@ import geemap.foliumap as geemap
 import folium
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
-import ee
 import json
-import streamlit as st
 import tempfile
 import ee
+import streamlit as st
 
-# Convert TOML string to JSON dict → write to file → use with EE
 with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".json") as f:
     json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
     key_path = f.name
 
 credentials = ee.ServiceAccountCredentials(
     st.secrets["earthengine"]["service_account"],
-    key_path
+    key_path  # ✅ filepath, not dict
 )
 ee.Initialize(credentials)
+
 
 
 
