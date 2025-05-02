@@ -72,6 +72,22 @@ if run_analysis:
     point = ee.Geometry.Point([lon, lat])
     aoi = point.buffer(buffer_radius)
 
+satellite_rgb = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA") \
+    .filterDate(start_date, end_date) \
+    .filterBounds(aoi) \
+    .filter(ee.Filter.lt('CLOUD_COVER', 20)) \
+    .select(['B4', 'B3', 'B2']) \
+    .mean()
+
+Map.addLayer(satellite_rgb.clip(aoi), {
+    'min': 0.05, 'max': 0.3,
+    'bands': ['B4', 'B3', 'B2']
+}, 'Landsat 8 RGB Background')
+
+
+
+
+    
     start_date = f"{selected_year}-{'01-01' if date_range == 'Full Year' else '05-01'}"
     end_date = f"{selected_year}-{'12-31' if date_range == 'Full Year' else '08-31'}"
 
