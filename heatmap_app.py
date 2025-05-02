@@ -28,32 +28,19 @@ except Exception as e:
 # Default parameters
 postcode = 'SW1A 1AA'
 if STREAMLIT_MODE:
-    # UI controls before analysis
-    buffer_radius = st.slider("Buffer radius (meters)", min_value=100, max_value=2000, value=500, step=100, key='input_buffer')
-    selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], index=9, key='input_year')
-    date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key='input_season')
-    cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20, key='input_cloud')
+    # Two-column layout
+    left_col, right_col = st.columns([1, 2])
 
-    st.markdown("""
-<style>
-.top-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-}
-</style>
-<div class='top-container'>
-    <a href="https://www.ukgbc.org" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/en/2/29/UK_Green_Building_Council_logo.png" width="120"/>
-    </a>
-    <a href="https://www.hoarelea.com" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/28/Hoare_Lea_logo.svg/320px-Hoare_Lea_logo.svg.png" width="120"/>
-    </a>
-</div>
-""", unsafe_allow_html=True)
-    postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
-    run_analysis = st.button("Run Analysis")
+    with left_col:
+        postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
+        buffer_radius = st.slider("Buffer radius (meters)", min_value=100, max_value=2000, value=500, step=100, key='input_buffer')
+        selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], index=9, key='input_year')
+        date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key='input_season')
+        cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20, key='input_cloud')
+        run_analysis = st.button("Run Analysis")
+
+    with right_col:
+        st.markdown("## Map Output")
 
 geolocator = Nominatim(user_agent="geoapi")
 from geopy.exc import GeocoderTimedOut
@@ -134,7 +121,9 @@ if STREAMLIT_MODE and run_analysis:
         else:
             return "Ecological Risk"
 
-    with st.expander("Map Layers"):
+    with right_col:
+        st.markdown("### Heat Map Viewer")
+        with st.expander("Map Layers", expanded=True):
         show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Layer Opacity", 0.0, 1.0, 0.6, key='layer_lst_opacity')
         show_utfvi = st.checkbox("Show UTFVI", value=True)
@@ -154,9 +143,9 @@ if STREAMLIT_MODE and run_analysis:
                 'opacity': utfvi_opacity
             }, 'UTFVI')
 
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+                Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
-    with st.expander("Analysis Summary"):
+    with left_col.expander("Analysis Summary", expanded=True):
         st.write("### Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
         st.write("### Mean LST: {:.2f} °C".format(lst_mean.getInfo()))
         st.write("### Mean UTFVI: {:.4f}".format(utfvi_mean.getInfo()))
@@ -171,4 +160,3 @@ if not STREAMLIT_MODE:
     print("(Higher UTFVI = more ecological stress)")
     Map.add_child(folium.LayerControl())
     display(Map)
-
