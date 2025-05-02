@@ -2,35 +2,39 @@ import ee
 import geemap.foliumap as geemap
 import folium
 from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
 
-import json
-import streamlit as st
-import tempfile
-import ee
+# Check if running inside Streamlit or fallback to console mode
+try:
+    import streamlit as st
+    STREAMLIT_MODE = True
+except ModuleNotFoundError:
+    print("Streamlit not found. Running in Jupyter fallback mode.")
+    STREAMLIT_MODE = False
 
-# Safely write private key to a temp .json file
-service_account = st.secrets["earthengine"]["service_account"]
-private_key_dict = json.loads(st.secrets["earthengine"]["private_key"])
+# Initialize Earth Engine
+try:
+    import json
 
-with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
-    json.dump(private_key_dict, f)
-    key_path = f.name
+    service_account_info = json.loads(st.secrets["earthengine"]["private_key"])
+    credentials = ee.ServiceAccountCredentials(
+        st.secrets["earthengine"]["service_account"],
+        service_account_info
+    )
+    ee.Initialize(credentials)
+except Exception as e:
+    ee.Authenticate()
+    ee.Initialize()
 
-# Initialize Earth Engine using the correct filepath
-credentials = ee.ServiceAccountCredentials(service_account, key_path)
-ee.Initialize(credentials)
+# Default parameters
+postcode = 'SW1A 1AA'
+if STREAMLIT_MODE:
+    # UI controls before analysis
+    buffer_radius = st.slider("Buffer radius (meters)", min_value=100, max_value=2000, value=500, step=100, key='input_buffer')
+    selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], index=9, key='input_year')
+    date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key='input_season')
+    cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20, key='input_cloud')
 
-
-
-
-
-
-# Streamlit App
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
-
-# Logos pinned to top
-st.markdown("""
+    st.markdown("""
 <style>
 .top-container {
   display: flex;
@@ -48,17 +52,11 @@ st.markdown("""
     </a>
 </div>
 """, unsafe_allow_html=True)
+    postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
+    run_analysis = st.button("Run Analysis")
 
-# Input controls
-postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
-buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500, key='input_buffer')
-selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key='input_year')
-date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key='input_season')
-cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20, key='input_cloud')
-run_analysis = st.button("Run Analysis")
-
-# Geocoder setup
 geolocator = Nominatim(user_agent="geoapi")
+from geopy.exc import GeocoderTimedOut
 
 def geocode_with_retry(postcode, retries=3):
     for i in range(retries):
@@ -69,11 +67,11 @@ def geocode_with_retry(postcode, retries=3):
                 raise
             continue
 
-# Analysis block
-if run_analysis:
+# Run analysis only when user clicks the button
+if STREAMLIT_MODE and run_analysis:
     location = geocode_with_retry(postcode)
-    if location is None:
-        st.error(f"Invalid postcode: {postcode}")
+    if 'location' not in locals() or location is None:
+        st.error(f"Invalid or unreachable postcode: {postcode}. Please check your input or connection and try again.")
         st.stop()
 
     lat, lon = location.latitude, location.longitude
@@ -114,7 +112,10 @@ if run_analysis:
 
     lst = thermal.expression(
         '(tb / (1 + (0.00115 * (tb / 0.4836)) * log(em))) - 273.15',
-        {'tb': thermal.select('B10'), 'em': em}
+        {
+            'tb': thermal.select('B10'),
+            'em': em
+        }
     ).rename('LST')
     lst_mean = lst.reduceRegion(ee.Reducer.mean(), aoi, 30).get('LST')
 
@@ -141,23 +142,4 @@ if run_analysis:
 
         if show_lst:
             Map.addLayer(lst.clip(aoi), {
-                'min': 0, 'max': 56,
-                'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': lst_opacity
-            }, 'LST (°C)')
-
-        if show_utfvi:
-            Map.addLayer(utfvi.clip(aoi), {
-                'min': -0.4, 'max': 0.4,
-                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': utfvi_opacity
-            }, 'UTFVI')
-
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
-
-    with st.expander("Analysis Summary"):
-        st.write("### Mean NDVI: {:.2f}".format(ndvi_mean.getInfo()))
-        st.write("### Mean LST: {:.2f} °C".format(lst_mean.getInfo()))
-        st.write("### Mean UTFVI: {:.4f}".format(utfvi_mean.getInfo()))
-        st.write("### Ecological Class: {}".format(classify_utfvi(utfvi_mean.getInfo())))
-        st.write("(Higher UTFVI = more ecological stress)")
+                'min': 0, 'max'
