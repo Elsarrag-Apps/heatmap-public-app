@@ -7,6 +7,21 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
+
+# ✅ GLOBAL geocoder function
+geolocator = Nominatim(user_agent="geoapi")
+def geocode_with_retry(postcode, retries=3):
+    for i in range(retries):
+        try:
+            return geolocator.geocode(postcode, timeout=10)
+        except GeocoderTimedOut:
+            if i == retries - 1:
+                raise
+            continue
+
+
+
+
 # Streamlit config
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
@@ -58,16 +73,6 @@ if mode == "Urban Heat Risk":
         cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20)
         run_analysis = st.button("Run Analysis")
 
-    geolocator = Nominatim(user_agent="geoapi")
-
-    def geocode_with_retry(postcode, retries=3):
-        for i in range(retries):
-            try:
-                return geolocator.geocode(postcode, timeout=10)
-            except GeocoderTimedOut:
-                if i == retries - 1:
-                    raise
-                continue
 
     if run_analysis:
         location = geocode_with_retry(postcode)
