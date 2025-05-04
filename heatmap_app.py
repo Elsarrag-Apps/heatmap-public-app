@@ -1,3 +1,4 @@
+
 import ee
 import geemap.foliumap as geemap
 import folium
@@ -7,21 +8,25 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
-# Earth Engine auth using Streamlit secrets
+
+# Streamlit page config
+st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
+
+# ✅ Top-level mode selector (must be here, outside any block)
+mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
+
+# ✅ Earth Engine auth using Streamlit secrets
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
         key_path = f.name
     credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
     ee.Initialize(credentials)
-except Exception:
-    st.error("Earth Engine authentication failed. Check Streamlit secrets.")
+except Exception as e:
+    st.error("Earth Engine initialization failed. Check Streamlit secrets.")
     st.stop()
 
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
-# Mode selector
-mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
 
 # ✅ Mode 1: Urban Heat Risk
 if mode == "Urban Heat Risk":
