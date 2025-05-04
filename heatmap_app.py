@@ -22,7 +22,7 @@ except Exception:
     st.error("Earth Engine authentication failed.")
     st.stop()
 
-# Shared geocoder
+# Geocoder
 geolocator = Nominatim(user_agent="geoapi")
 def geocode_with_retry(postcode, retries=3):
     for i in range(retries):
@@ -33,11 +33,11 @@ def geocode_with_retry(postcode, retries=3):
                 raise
             continue
 
-# Shared layout + map
+# Layout and shared map
 left_col, right_col = st.columns([1, 2])
 Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
-# Mode 1: Urban Heat Risk
+# --- MODE 1: Urban Heat Risk ---
 if mode == "Urban Heat Risk":
     with left_col:
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
@@ -100,6 +100,7 @@ if mode == "Urban Heat Risk":
 
     with right_col:
         st.markdown("### Heat Map Viewer")
+
         if "map_center" in st.session_state:
             Map.set_center(st.session_state.map_center[1], st.session_state.map_center[0], 16)
             Map.add_child(folium.Marker(
@@ -108,19 +109,20 @@ if mode == "Urban Heat Risk":
                 popup=f"Postcode: {postcode}"
             ))
 
+        # ✅ Always show layer toggles
         show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6)
         show_utfvi = st.checkbox("Show UTFVI", value=True)
         utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6)
 
-        if "lst" in st.session_state and show_lst:
+        if show_lst and "lst" in st.session_state:
             Map.addLayer(st.session_state.lst, {
                 'min': 0, 'max': 56,
                 'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
                 'opacity': lst_opacity
             }, 'LST')
 
-        if "utfvi" in st.session_state and show_utfvi:
+        if show_utfvi and "utfvi" in st.session_state:
             Map.addLayer(st.session_state.utfvi, {
                 'min': -0.4, 'max': 0.4,
                 'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
@@ -134,7 +136,7 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
-# Mode 2: Building Overheating Risk
+# --- MODE 2: Building Overheating Risk ---
 elif mode == "Building Overheating Risk":
     with left_col:
         postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
@@ -154,6 +156,7 @@ elif mode == "Building Overheating Risk":
         if location_b:
             lat_b, lon_b = location_b.latitude, location_b.longitude
             user_point = ee.Geometry.Point([lon_b, lat_b])
+
             city_coords = {
                 "Leeds": (53.8008, -1.5491),
                 "Nottingham": (52.9548, -1.1581),
@@ -162,6 +165,7 @@ elif mode == "Building Overheating Risk":
                 "Cardiff": (51.4816, -3.1791),
                 "Swindon": (51.5558, -1.7797)
             }
+
             city_buffers = {
                 city: ee.Geometry.Point([lon, lat]).buffer(150000)
                 for city, (lat, lon) in city_coords.items()
