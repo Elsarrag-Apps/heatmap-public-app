@@ -170,8 +170,8 @@ if mode == "Urban Heat Risk":
 def run_building_overheating_risk(left_col, right_col, Map):
     with left_col:
         st.markdown("## 🏢 Building Overheating Risk Tool")
-if mode == "Building Overheating Risk":
-    run_building_overheating_risk(left_col, right_col, Map)
+        if mode == "Building Overheating Risk":
+        run_building_overheating_risk(left_col, right_col, Map)
 
         postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
         locate = st.button("Locate and Analyze")
