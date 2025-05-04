@@ -172,26 +172,31 @@ if mode == "Building Overheating Risk":
 
 def run_building_overheating_risk(left_col, right_col, Map):
     with left_col:
+        st.markdown("## 🏢 Building Overheating Risk Tool")
+
         postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
         locate = st.button("Locate and Analyze")
 
         building_type = st.selectbox("Select Building Type", [
             "Low-Rise Residential", "High-Rise Residential", "Office",
             "School", "Care Home", "Healthcare"
-        ])
+        ], key="building_type")
+
         age_band = st.selectbox("Select Building Age Band", [
             "Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"
-        ])
-        mitigation = st.radio("Mitigation Strategy", ["Baseline", "Passive", "Active"])
+        ], key="age_band")
+
+        mitigation = st.radio("Mitigation Strategy", ["Baseline", "Passive", "Active"], key="mitigation")
 
     if locate:
+        st.markdown("### 📍 Processing Location...")
         location_b = geocode_with_retry(postcode_b)
         if location_b:
             lat_b, lon_b = location_b.latitude, location_b.longitude
             point = ee.Geometry.Point([lon_b, lat_b])
             st.session_state.user_coords = (lat_b, lon_b)
 
-            # ✅ 1. Use 200km buffer to determine nearest city
+            # ✅ 1. Use 200 km buffer to assign city
             city_coords = {
                 "Leeds": (53.8008, -1.5491),
                 "Nottingham": (52.9548, -1.1581),
@@ -201,41 +206,43 @@ def run_building_overheating_risk(left_col, right_col, Map):
                 "Swindon": (51.5558, -1.7797)
             }
 
-            city_buffers = {
-                city: ee.Geometry.Point([lon, lat]).buffer(200000)
-                for city, (lat, lon) in city_coords.items()
-            }
-
             matched_city = None
-            for city, buffer_geom in city_buffers.items():
-                if buffer_geom.contains(point).getInfo():
-                    matched_city = city
-                    break
+            try:
+                for city, (lat_c, lon_c) in city_coords.items():
+                    buffer = ee.Geometry.Point([lon_c, lat_c]).buffer(200000)
+                    if buffer.contains(point).getInfo():
+                        matched_city = city
+                        break
+            except Exception as e:
+                st.error(f"Error checking city buffers: {e}")
+                return
 
             if matched_city:
-                st.success(f"📍 Matched to: {matched_city}")
+                st.success(f"📌 Matched to analysis city: {matched_city}")
                 st.session_state.selected_city = matched_city
             else:
-                st.warning("⚠️ This postcode is outside the known risk zones.")
-                st.stop()
+                st.warning("⚠️ No matching analysis city found.")
+                return
 
-            # ✅ 2. Create a 50m buffer for display
-            display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
-            st.session_state.display_circle = display_circle
+            # ✅ 2. Create 50m display circle
+            try:
+                display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
+                st.session_state.display_circle = display_circle
+            except Exception as e:
+                st.warning(f"⚠️ Failed to create map circle: {e}")
 
-    # 🔁 Map rendering
     with right_col:
-        st.markdown("### Building Risk Map")
+        st.markdown("### Map Viewer")
 
-        if "user_coords" in st.session_state:
-            lat, lon = st.session_state.user_coords
-            Map.set_center(lon, lat, 15)
+        try:
+            if "user_coords" in st.session_state:
+                lat, lon = st.session_state.user_coords
+                Map.set_center(lon, lat, 15)
 
-            # ✅ Add circle
             if "display_circle" in st.session_state:
-                try:
-                    Map.addLayer(st.session_state.display_circle, {"color": "orange"}, "Selected Site")
-                except Exception:
-                    st.warning("⚠️ Could not display location circle.")
+                Map.addLayer(st.session_state.display_circle, {"color": "orange"}, "Selected Site")
 
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+            Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+
+        except Exception as e:
+            st.error(f"🚨 Error displaying map: {e}")
