@@ -7,11 +7,11 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
-# Set up page
+# Streamlit setup
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
 
-# EE auth
+# EE authentication
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
@@ -22,7 +22,7 @@ except Exception:
     st.error("Earth Engine authentication failed.")
     st.stop()
 
-# Geocoder
+# Geocoder setup
 geolocator = Nominatim(user_agent="geoapi")
 def geocode_with_retry(postcode, retries=3):
     for i in range(retries):
@@ -33,11 +33,11 @@ def geocode_with_retry(postcode, retries=3):
                 raise
             continue
 
-# Layout and shared map
+# Shared layout + map
 left_col, right_col = st.columns([1, 2])
 Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
-# --- MODE 1: Urban Heat Risk ---
+# Urban Heat Risk Mode
 if mode == "Urban Heat Risk":
     with left_col:
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
@@ -109,12 +109,13 @@ if mode == "Urban Heat Risk":
                 popup=f"Postcode: {postcode}"
             ))
 
-        # ✅ Always show layer toggles
+        # Always show sliders + toggles
         show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6)
         show_utfvi = st.checkbox("Show UTFVI", value=True)
         utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6)
 
+        # Only add layers if data exists
         if show_lst and "lst" in st.session_state:
             Map.addLayer(st.session_state.lst, {
                 'min': 0, 'max': 56,
@@ -129,6 +130,8 @@ if mode == "Urban Heat Risk":
                 'opacity': utfvi_opacity
             }, 'UTFVI')
 
+        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+
     with left_col.expander("Analysis Summary", expanded=True):
         if "ndvi_mean" in st.session_state:
             st.write(f"### Mean NDVI: {st.session_state.ndvi_mean:.2f}")
@@ -136,59 +139,4 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
-# --- MODE 2: Building Overheating Risk ---
-elif mode == "Building Overheating Risk":
-    with left_col:
-        postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
-        locate = st.button("Check Overheating Zone")
-
-        building_type = st.selectbox("Select Building Type", [
-            "Low-Rise Residential", "High-Rise Residential", "Office",
-            "School", "Care Home", "Healthcare"
-        ])
-        age_band = st.selectbox("Select Building Age Band", [
-            "Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"
-        ])
-        mitigation = st.radio("Select Mitigation Strategy", ["Baseline", "Passive", "Active"])
-
-    if locate:
-        location_b = geocode_with_retry(postcode_b)
-        if location_b:
-            lat_b, lon_b = location_b.latitude, location_b.longitude
-            user_point = ee.Geometry.Point([lon_b, lat_b])
-
-            city_coords = {
-                "Leeds": (53.8008, -1.5491),
-                "Nottingham": (52.9548, -1.1581),
-                "London": (51.5074, -0.1278),
-                "Glasgow": (55.8642, -4.2518),
-                "Cardiff": (51.4816, -3.1791),
-                "Swindon": (51.5558, -1.7797)
-            }
-
-            city_buffers = {
-                city: ee.Geometry.Point([lon, lat]).buffer(150000)
-                for city, (lat, lon) in city_coords.items()
-            }
-
-            matched_city = None
-            for city, buffer_geom in city_buffers.items():
-                if buffer_geom.contains(user_point).getInfo():
-                    matched_city = city
-                    break
-
-            if matched_city:
-                st.success(f"📍 Postcode matches to: **{matched_city}**")
-                st.session_state.selected_city = matched_city
-                st.session_state.user_coords = (lat_b, lon_b)
-                Map.set_center(lon_b, lat_b, 10)
-                Map.add_child(folium.Marker(
-                    location=(lat_b, lon_b),
-                    icon=folium.Icon(color="red", icon="home", prefix="fa"),
-                    popup=f"{matched_city} – {building_type}"
-                ))
-            else:
-                st.warning("⚠️ This postcode is outside the known analysis zones.")
-
-    with right_col:
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+# You can now continue with Building Overheating Risk mode logic here.
