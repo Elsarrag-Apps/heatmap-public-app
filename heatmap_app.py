@@ -166,6 +166,10 @@ if mode == "Urban Heat Risk":
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
 # === MODE 2: Building Overheating Risk (Placeholder for now) ===
+
+if mode == "Building Overheating Risk":
+    run_building_overheating_risk(left_col, right_col, Map)
+
 def run_building_overheating_risk(left_col, right_col, Map):
     with left_col:
         postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
