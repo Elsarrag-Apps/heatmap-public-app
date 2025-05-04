@@ -175,8 +175,8 @@ elif mode == "Building Overheating Risk":
         st.write("📍 Building Overheating Risk model will be added here...")
 
     with right_col:
-         with right_col:
-     
+         st.markdown("### Heat Map Viewer")
+
         Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
         if "map_center" in st.session_state:
@@ -186,4 +186,4 @@ elif mode == "Building Overheating Risk":
                 icon=folium.Icon(color='red', icon='tint', prefix='fa'),
                 popup=f"Postcode: {postcode_b}"
             ))
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
