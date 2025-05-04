@@ -242,5 +242,4 @@ def run_building_overheating_risk(left_col, right_col, Map):
         except Exception as e:
             st.error(f"🚨 Error displaying map: {e}")
 
-if mode == "Building Overheating Risk":
-    run_building_overheating_risk(left_col, right_col, Map)
+   
