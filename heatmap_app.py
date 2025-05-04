@@ -22,7 +22,7 @@ except Exception:
     st.error("Earth Engine authentication failed.")
     st.stop()
 
-# Shared geocoder
+# Geocoder
 geolocator = Nominatim(user_agent="geoapi")
 def geocode_with_retry(postcode, retries=3):
     for i in range(retries):
@@ -33,11 +33,11 @@ def geocode_with_retry(postcode, retries=3):
                 raise
             continue
 
-# Shared layout + map
+# Shared layout
 left_col, right_col = st.columns([1, 2])
 Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
-# --- Urban Heat Risk Mode ---
+# Urban Heat Risk
 if mode == "Urban Heat Risk":
     with left_col:
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
@@ -53,6 +53,7 @@ if mode == "Urban Heat Risk":
             lat, lon = location.latitude, location.longitude
             point = ee.Geometry.Point([lon, lat])
             aoi = point.buffer(buffer_radius)
+            st.session_state.aoi = aoi  # ✅ Store AOI for map
 
             start_date = f"{selected_year}-{'01-01' if date_range == 'Full Year' else '05-01'}"
             end_date = f"{selected_year}-{'12-31' if date_range == 'Full Year' else '08-31'}"
@@ -103,7 +104,7 @@ if mode == "Urban Heat Risk":
                     "Ecological Risk"
                 ) if st.session_state.utfvi_mean is not None else "Unknown"
             except Exception as e:
-                st.warning("⚠️ Data could not be retrieved. Please try a different postcode.")
+                st.warning("⚠️ Earth Engine data could not be processed.")
 
     with right_col:
         st.markdown("### Heat Map Viewer")
@@ -116,12 +117,19 @@ if mode == "Urban Heat Risk":
                 popup=f"Postcode: {postcode}"
             ))
 
+        # ✅ Add AOI circle
+        if "aoi" in st.session_state:
+            try:
+                Map.addLayer(st.session_state.aoi, {"color": "red"}, "AOI Buffer")
+            except Exception:
+                st.warning("⚠️ AOI could not be rendered.")
+
+        # ✅ Layer controls
         show_lst = st.checkbox("Show LST", value=True)
         lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6)
         show_utfvi = st.checkbox("Show UTFVI", value=True)
         utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6)
 
-        # ✅ Wrap Map layer logic safely
         try:
             if show_lst and "lst" in st.session_state:
                 Map.addLayer(st.session_state.lst, {
@@ -130,7 +138,7 @@ if mode == "Urban Heat Risk":
                     'opacity': lst_opacity
                 }, 'LST')
         except Exception:
-            st.warning("⚠️ Could not add LST layer to map.")
+            st.warning("⚠️ LST layer could not be displayed.")
 
         try:
             if show_utfvi and "utfvi" in st.session_state:
@@ -140,7 +148,7 @@ if mode == "Urban Heat Risk":
                     'opacity': utfvi_opacity
                 }, 'UTFVI')
         except Exception:
-            st.warning("⚠️ Could not add UTFVI layer to map.")
+            st.warning("⚠️ UTFVI layer could not be displayed.")
 
         Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
@@ -150,6 +158,7 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean LST: {st.session_state.lst_mean:.2f} °C" if st.session_state.lst_mean else "LST not available")
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}" if st.session_state.utfvi_mean else "UTFVI not available")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
+
 
 # ✅ Ready for Building Overheating Risk logic next...
 # --- Building Overheating Risk Mode ---
