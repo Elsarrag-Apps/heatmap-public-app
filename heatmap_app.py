@@ -174,4 +174,49 @@ if mode == "Urban Heat Risk":
 elif mode == "Building Overheating Risk":
     st.write("🏢 Building Overheating Risk mode selected — development coming next...")
 
+with st.container():
+    left_col, right_col = st.columns([1, 2])
+
+with left_col:
+    postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA")
+    locate = st.button("Check Overheating Zone")
+
+if locate:
+    geolocator = Nominatim(user_agent="geoapi_building")
+    location_b = geocode_with_retry(postcode_b)
+    
+    if location_b:
+        lat_b, lon_b = location_b.latitude, location_b.longitude
+        user_point = ee.Geometry.Point([lon_b, lat_b])
+
+        # Define city centers
+        city_coords = {
+            "Leeds": (53.8008, -1.5491),
+            "Nottingham": (52.9548, -1.1581),
+            "London": (51.5074, -0.1278),
+            "Glasgow": (55.8642, -4.2518),
+            "Cardiff": (51.4816, -3.1791),
+            "Swindon": (51.5558, -1.7797)
+        }
+
+        city_buffers = {
+            city: ee.Geometry.Point([lon, lat]).buffer(50000)
+            for city, (lat, lon) in city_coords.items()
+        }
+
+        matched_city = None
+        for city, buffer_geom in city_buffers.items():
+            if buffer_geom.contains(user_point).getInfo():
+                matched_city = city
+                break
+
+        if matched_city:
+            st.success(f"📍 Postcode matches to: **{matched_city}**")
+            st.session_state.selected_city = matched_city
+            st.session_state.user_coords = (lat_b, lon_b)
+        else:
+            st.warning("⚠️ This postcode is outside the known analysis zones.")
+            st.session_state.selected_city = None
+    else:
+        st.error("Postcode could not be geolocated.")
 
