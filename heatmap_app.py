@@ -205,7 +205,7 @@ if locate:
         }
 
         city_buffers = {
-            city: ee.Geometry.Point([lon, lat]).buffer(150000)
+            city: ee.Geometry.Point([lon, lat]).buffer(200000)
             for city, (lat, lon) in city_coords.items()
         }
 
