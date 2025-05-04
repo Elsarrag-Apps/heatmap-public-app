@@ -7,6 +7,26 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
+  st.markdown("""
+    <style>
+    .top-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+    }
+    </style>
+    <div class='top-container'>
+        <a href="https://www.ukgbc.org" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/en/2/29/UK_Green_Building_Council_logo.png" width="120"/>
+        </a>
+        <a href="https://www.hoarelea.com" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/28/Hoare_Lea_logo.svg/320px-Hoare_Lea_logo.svg.png" width="120"/>
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 # Earth Engine auth
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
@@ -38,25 +58,7 @@ left_col, right_col = st.columns([1, 2])
 
 # === MODE 1: Urban Heat Risk ===
 if mode == "Urban Heat Risk":
-    st.markdown("""
-    <style>
-    .top-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-    }
-    </style>
-    <div class='top-container'>
-        <a href="https://www.ukgbc.org" target="_blank">
-            <img src="https://upload.wikimedia.org/wikipedia/en/2/29/UK_Green_Building_Council_logo.png" width="120"/>
-        </a>
-        <a href="https://www.hoarelea.com" target="_blank">
-            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/28/Hoare_Lea_logo.svg/320px-Hoare_Lea_logo.svg.png" width="120"/>
-        </a>
-    </div>
-    """, unsafe_allow_html=True)
-
+  
     with left_col:
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
         buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500)
@@ -176,4 +178,16 @@ elif mode == "Building Overheating Risk":
         st.write("📍 Building Overheating Risk model will be added here...")
 
     with right_col:
+         with right_col:
+        st.markdown("### Heat Map Viewer")
+
+        Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
+
+        if "map_center" in st.session_state:
+            Map.set_center(st.session_state.map_center[1], st.session_state.map_center[0], 16)
+            Map.add_child(folium.Marker(
+                location=st.session_state.map_center,
+                icon=folium.Icon(color='red', icon='tint', prefix='fa'),
+                popup=f"Postcode: {postcode}"
+            ))
         Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
