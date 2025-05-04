@@ -15,6 +15,15 @@ st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 # ✅ Top-level mode selector (must be here, outside any block)
 mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
 
+import streamlit as st
+
+st.set_page_config(layout="wide")
+
+mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
+st.write(f"You selected: {mode}")
+
+
+
 # ✅ Earth Engine auth using Streamlit secrets
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
