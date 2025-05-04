@@ -193,7 +193,6 @@ def run_building_overheating_risk(left_col, right_col, Map):
             point = ee.Geometry.Point([lon_b, lat_b])
             st.session_state.user_coords = (lat_b, lon_b)
 
-            # ✅ Use 200 km buffer to assign city
             city_coords = {
                 "Leeds": (53.8008, -1.5491),
                 "Nottingham": (52.9548, -1.1581),
@@ -221,7 +220,6 @@ def run_building_overheating_risk(left_col, right_col, Map):
                 st.warning("⚠️ No matching analysis city found.")
                 return
 
-            # ✅ Create 50m display circle
             try:
                 display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
                 st.session_state.display_circle = display_circle
@@ -243,5 +241,6 @@ def run_building_overheating_risk(left_col, right_col, Map):
 
         except Exception as e:
             st.error(f"🚨 Error displaying map: {e}")
+
 if mode == "Building Overheating Risk":
     run_building_overheating_risk(left_col, right_col, Map)
