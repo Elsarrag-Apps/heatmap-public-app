@@ -225,3 +225,35 @@ if locate:
     else:
         st.error("Postcode could not be geolocated.")
 
+
+with st.container():
+    left_col, right_col = st.columns([1, 2])
+
+with left_col:
+    postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA")
+    locate = st.button("Check Overheating Zone")
+
+    # ✅ Building Type
+    building_type = st.selectbox("Select Building Type", [
+        "Low-Rise Residential",
+        "High-Rise Residential",
+        "Office",
+        "School",
+        "Care Home",
+        "Healthcare"
+    ])
+
+    # ✅ Age Band
+    age_band = st.selectbox("Select Building Age Band", [
+        "Pre-1945",
+        "1945–1970",
+        "1970–2000",
+        "2000–2020",
+        "New Build"
+    ])
+
+    # ✅ Mitigation Strategy
+    mitigation = st.radio("Select Mitigation Strategy", [
+        "Baseline", "Passive", "Active"
+    ])
+
