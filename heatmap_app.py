@@ -165,8 +165,16 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
-# === MODE 2: Building Overheating Risk (Placeholder for now) ===
+# === MODE 2: Building Overheating R# Shared layout and map
+left_col, right_col = st.columns([1, 2])
+Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
+# Mode selector
+mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
+
+# =======================
+# Define function first!
+# =======================
 def run_building_overheating_risk(left_col, right_col, Map):
     with left_col:
         st.markdown("## 🏢 Building Overheating Risk Tool")
@@ -186,7 +194,6 @@ def run_building_overheating_risk(left_col, right_col, Map):
         mitigation = st.radio("Mitigation Strategy", ["Baseline", "Passive", "Active"], key="mitigation")
 
     if locate:
-        st.markdown("### 📍 Processing Location...")
         location_b = geocode_with_retry(postcode_b)
         if location_b:
             lat_b, lon_b = location_b.latitude, location_b.longitude
@@ -220,6 +227,7 @@ def run_building_overheating_risk(left_col, right_col, Map):
                 st.warning("⚠️ No matching analysis city found.")
                 return
 
+            # 50 m map circle
             try:
                 display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
                 st.session_state.display_circle = display_circle
@@ -238,6 +246,16 @@ def run_building_overheating_risk(left_col, right_col, Map):
                 Map.addLayer(st.session_state.display_circle, {"color": "orange"}, "Selected Site")
 
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+
+        except Exception as e:
+            st.error(f"🚨 Error displaying map: {e}")
+
+# ====================
+# Call based on mode
+# ====================
+if mode == "Building Overheating Risk":
+    run_building_overheating_risk(left_col, right_col, Map)
+
 
         except Exception as e:
             st.error(f"🚨 Error displaying map: {e}")
