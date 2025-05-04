@@ -7,7 +7,13 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
-# Earth Engine auth using Streamlit secrets
+# Streamlit config
+st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
+
+# ✅ View mode selector
+mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
+
+# ✅ Earth Engine authentication
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
@@ -18,12 +24,7 @@ except Exception:
     st.error("Earth Engine authentication failed. Check Streamlit secrets.")
     st.stop()
 
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
-
-# Mode selector
-mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
-
-# ✅ Mode 1: Urban Heat Risk
+# ✅ Urban Heat Risk Mode
 if mode == "Urban Heat Risk":
 
     # Logos
@@ -57,8 +58,8 @@ if mode == "Urban Heat Risk":
         cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20)
         run_analysis = st.button("Run Analysis")
 
-    # Geocoding helper
     geolocator = Nominatim(user_agent="geoapi")
+
     def geocode_with_retry(postcode, retries=3):
         for i in range(retries):
             try:
@@ -112,6 +113,7 @@ if mode == "Urban Heat Risk":
         utfvi = lst.subtract(ee.Image.constant(lst_mean)).divide(lst).rename('UTFVI')
         utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), aoi, 30).get('UTFVI')
 
+        # Save to session
         st.session_state.map_center = [lat, lon]
         st.session_state.lst = lst.clip(aoi)
         st.session_state.utfvi = utfvi.clip(aoi)
@@ -128,6 +130,7 @@ if mode == "Urban Heat Risk":
 
     with right_col:
         st.markdown("### Heat Map Viewer")
+
         Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
         if "map_center" in st.session_state:
@@ -167,12 +170,8 @@ if mode == "Urban Heat Risk":
             st.write("### Ecological Class: {}".format(st.session_state.utfvi_class))
             st.write("(Higher UTFVI = more ecological stress)")
 
-# ✅ Mode 2: Building Overheating Risk (logic to be added next)
+# ✅ Placeholder for next module
 elif mode == "Building Overheating Risk":
-    st.write("🏢 Building Overheating Risk mode selected — integration coming next...")
-
-
-
-
+    st.write("🏢 Building Overheating Risk mode selected — development coming next...")
 
 
