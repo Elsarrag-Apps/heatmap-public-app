@@ -149,7 +149,7 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
- -------------------------------
+# -------------------------------
 # MODE 2: Building Overheating Risk
 # -------------------------------
 elif mode == "Building Overheating Risk":
