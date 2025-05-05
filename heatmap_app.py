@@ -9,6 +9,12 @@ from geopy.exc import GeocoderTimedOut
 from geopy.distance import geodesic
 
 
+
+# Page setup
+st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
+mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
+
+
 # ✅ MUST BE FIRST Streamlit command
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
@@ -21,9 +27,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# Page setup
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
-mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
 
 # EE auth
 try:
