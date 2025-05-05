@@ -193,8 +193,8 @@ elif mode == "Building Overheating Risk":
           </div>
         </div>
         """
-        with right_col:   
-            st.markdown(f"<div style='font-size:24px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
+    
+            
         
         with left_col:
             st.markdown("## 🏢 Building Overheating Risk Tool")
@@ -281,7 +281,13 @@ elif mode == "Building Overheating Risk":
 
         with right_col:
             st.markdown("### Risk Map")
-           
+           if entry:
+            st.markdown(f"""
+            <div style='font-size:18px; font-weight:bold; margin-bottom:10px;'>
+            🛑 Risk Level {level} – {label}<br>
+            <span style='font-size:14px; font-weight:normal;'>{scenario}</span>
+            </div>
+            """, unsafe_allow_html=True)
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
             st.markdown(risk_legend_html, unsafe_allow_html=True)
 
