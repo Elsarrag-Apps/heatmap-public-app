@@ -40,12 +40,12 @@ Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 # === Urban Heat Risk ===
 def run_urban_heat_risk(left_col, right_col, Map):
     with left_col:
-    postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
-    buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500)
-    selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)])
-    date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'])
-    cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20)
-    run_analysis = st.button("Run Analysis")
+        postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA')
+        buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500)
+        selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)])
+        date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'])
+        cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20)
+        run_analysis = st.button("Run Analysis")
 
 # Geocoding helper
 geolocator = Nominatim(user_agent="geoapi")
