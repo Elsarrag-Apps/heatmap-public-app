@@ -149,211 +149,82 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
-# -------------------------------
+ -------------------------------
 # MODE 2: Building Overheating Risk
 # -------------------------------
 elif mode == "Building Overheating Risk":
+
+    from geopy.distance import geodesic
+
     def run_building_overheating_risk(left_col, right_col, Map):
+        risk_categories = {
+            1: {"label": "Low", "color": "green"},
+            2: {"label": "Medium", "color": "yellow"},
+            3: {"label": "High", "color": "orange"},
+            4: {"label": "Very High", "color": "red"},
+            5: {"label": "Extreme", "color": "darkred"}
+        }
+
+        risk_legend_html = """
+        <div style="padding:10px">
+          <h4 style="margin-bottom:5px">Risk Level Legend</h4>
+          <div style="display:flex;flex-direction:column;font-size:14px">
+            <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span>Low</div>
+            <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span>Medium</div>
+            <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span>High</div>
+            <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span>Very High</div>
+            <div><span style="display:inline-block;width:15px;height:15px;background-color:darkred;margin-right:6px;"></span>Extreme</div>
+          </div>
+        </div>
+        """
+
         with left_col:
             st.markdown("## 🏢 Building Overheating Risk Tool")
-
             postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
-            locate = st.button("Locate and Analyze", key="locate_btn")
+            building_type = st.selectbox("Building Type", ["Office"], key="btype")
+            age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
+            mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], key="mitigation")
+            climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
 
-            building_type = st.selectbox("Select Building Type", [
-                "Low-Rise Residential", "High-Rise Residential", "Office",
-                "School", "Care Home", "Healthcare"
-            ], key="bldg_type")
+        location_b = geocode_with_retry(postcode_b)
+        if location_b:
+            lat_b, lon_b = location_b.latitude, location_b.longitude
+            postcode_coords = (lat_b, lon_b)
 
-            age_band = st.selectbox("Select Building Age Band", [
-                "Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"
-            ], key="bldg_age")
+            city_coords = {
+                "Leeds": (53.8008, -1.5491),
+                "Nottingham": (52.9548, -1.1581),
+                "London": (51.5074, -0.1278),
+                "Glasgow": (55.8642, -4.2518),
+                "Cardiff": (51.4816, -3.1791),
+                "Swindon": (51.5558, -1.7797)
+            }
 
-            mitigation = st.radio("Mitigation Strategy", ["Baseline", "Passive", "Active"], key="bldg_mitigation")
+            matched_city, distance_km = min(
+                ((city, geodesic(postcode_coords, coords).km) for city, coords in city_coords.items()),
+                key=lambda x: x[1]
+            )
 
-        if locate:
-            location_b = geocode_with_retry(postcode_b)
-            if location_b:
-                lat_b, lon_b = location_b.latitude, location_b.longitude
-                point = ee.Geometry.Point([lon_b, lat_b])
-                st.session_state.user_coords = (lat_b, lon_b)
+            st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
 
-              # ✅ Define postcode coordinates before using in geodesic
-                postcode_coords = (lat_b, lon_b)
-      
-                city_coords = {
-                    "Leeds": (53.8008, -1.5491),
-                    "Nottingham": (52.9548, -1.1581),
-                    "London": (51.5074, -0.1278),
-                    "Glasgow": (55.8642, -4.2518),
-                    "Cardiff": (51.4816, -3.1791),
-                    "Swindon": (51.5558, -1.7797)
-                }
-     
-   
+            entry = risk_data.get(matched_city, {}).get(building_type, {}).get(age_band, {}).get(mitigation, {}).get(climate)
+            if entry:
+                level = entry["level"]
+                label = risk_categories[level]["label"]
+                scenario = entry["scenario"]
+                color = risk_categories[level]["color"]
 
-                matched_city, distance_km = min(
-                    ((city, geodesic(postcode_coords, coords).km) for city, coords in city_coords.items()),
-                    key=lambda x: x[1]
-                )
+                st.markdown(f"<div style='font-size:18px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
 
-                st.session_state.selected_city = matched_city
-                st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
-
-                # Optional: 50m visual circle
-                try:
-                    display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
-                    st.session_state.display_circle = display_circle
-                except Exception as e:
-                    st.warning(f"⚠️ Failed to create display circle: {e}")
-
-
-               
+                circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
+                Map.set_center(lon_b, lat_b, 15)
+                Map.addLayer(circle, {"color": color}, "Risk Circle")
+            else:
+                st.warning("❌ No risk data found for this selection.")
 
         with right_col:
-            st.markdown("### Building Risk Map")
-            if "user_coords" in st.session_state:
-                lat, lon = st.session_state.user_coords
-                Map.set_center(lon, lat, 15)
-            if "display_circle" in st.session_state:
-                Map.addLayer(st.session_state.display_circle, {"color": "orange"}, "Selected Site")
+            st.markdown("### Risk Map")
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+            st.markdown(risk_legend_html, unsafe_allow_html=True)
 
     run_building_overheating_risk(left_col, right_col, Map)
-
-
-
-# Build complete overheating risk dataset for Office buildings
-risk_data = {
-    "London": {
-        "Office": {
-            "Pre-1945": {
-                "Baseline": {"level": 5, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 4, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 3, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "1945–1970": {
-                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "1970–2000": {
-                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "2000–2020": {
-                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "New Build": {
-                "Baseline": {"level": 2, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 1, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            }
-        }
-    },
-    "Leeds": {
-        "Office": {
-            "Pre-1945": {
-                "Baseline": {"level": 5, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 4, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 3, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "1945–1970": {
-                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "1970–2000": {
-                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "2000–2020": {
-                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "New Build": {
-                "Baseline": {"level": 2, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 1, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            }
-        }
-    },
-    "Nottingham": {
-        "Office": {
-            "Pre-1945": {
-                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "1945–1970": {
-                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "1970–2000": {
-                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "2000–2020": {
-                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            },
-            "New Build": {
-                "Baseline": {"level": 2, "scenario": "2080 High Scenario (4°C)"},
-                "Passive": {"level": 1, "scenario": "2080 Med Scenario (3°C)"},
-                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
-            }
-        }
-    }
-}
-
-risk_data["Nottingham"]["Office"]["2000–2020"]["Passive"]  # Preview one entry
-
-# Generate a complete block of logic for risk display in the Building Overheating Risk tool
-# Includes dynamic text output, color circle, and risk category legend
-
-# Define risk display logic for Building Overheating Risk
-risk_categories = {
-    1: {"label": "Low", "color": "green"},
-    2: {"label": "Medium", "color": "yellow"},
-    3: {"label": "High", "color": "orange"},
-    4: {"label": "Very High", "color": "red"},
-    5: {"label": "Extreme", "color": "darkred"}
-}
-
-# Use test case
-city = "Nottingham"
-btype = "Office"
-age = "2000–2020"
-strategy = "Passive"
-
-# Look up risk
-entry = risk_data.get(city, {}).get(btype, {}).get(age, {}).get(strategy)
-if entry:
-    risk_level = entry["level"]
-    scenario = entry["scenario"]
-    risk_label = risk_categories[risk_level]["label"]
-    risk_color = risk_categories[risk_level]["color"]
-    summary = {
-        "risk_level": risk_level,
-        "risk_label": risk_label,
-        "scenario": scenario,
-        "color": risk_color
-    }
-else:
-    summary = {
-        "risk_level": None,
-        "risk_label": "Unavailable",
-        "scenario": "No data",
-        "color": "gray"
-    }
-
-summary
-
