@@ -195,7 +195,7 @@ elif mode == "Building Overheating Risk":
         with left_col:
             st.markdown("## 🏢 Building Overheating Risk Tool")
             postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
-            building_type = st.selectbox("Building Type", ["Office"], key="btype")
+            building_type = st.selectbox("Building Type", ["Low-rise Residential","High-rise Residential", "Office","School", "Carehome","Healthcare"], key="btype")
             age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
             mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], key="mitigation")
             climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
