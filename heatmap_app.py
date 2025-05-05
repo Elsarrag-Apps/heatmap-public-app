@@ -193,7 +193,8 @@ elif mode == "Building Overheating Risk":
           </div>
         </div>
         """
-         st.markdown(f"<div style='font-size:24px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
+        with right_col:   
+            st.markdown(f"<div style='font-size:24px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
         
         with left_col:
             st.markdown("## 🏢 Building Overheating Risk Tool")
@@ -222,7 +223,7 @@ elif mode == "Building Overheating Risk":
                 ((city, geodesic(postcode_coords, coords).km) for city, coords in city_coords.items()),
                 key=lambda x: x[1]
             )
-
+      
             st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
            
             risk_data = {}
