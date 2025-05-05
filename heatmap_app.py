@@ -160,15 +160,7 @@ elif mode == "Building Overheating Risk":
     from risk_data_healthcare import risk_data_healthcare
     from geopy.distance import geodesic
 
-    risk_data = {
-    **risk_data_office,
-    **risk_data_lowrise,
-    **risk_data_highrise,
-    **risk_data_school,
-    **risk_data_carehome,
-    **risk_data_healthcare,
-        
-    }
+    
 
     def run_building_overheating_risk(left_col, right_col, Map):
         risk_categories = {
@@ -220,6 +212,15 @@ elif mode == "Building Overheating Risk":
             )
 
             st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
+            risk_data = {
+                **risk_data_office,
+                **risk_data_lowrise,
+                **risk_data_highrise,
+                **risk_data_school,
+                **risk_data_carehome,
+                **risk_data_healthcare,
+        
+            }
 
             entry = risk_data.get(matched_city, {}).get(building_type, {}).get(age_band, {}).get(mitigation, {}).get(climate)
             if entry:
