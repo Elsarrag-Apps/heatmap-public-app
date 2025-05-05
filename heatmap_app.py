@@ -187,7 +187,7 @@ elif mode == "Building Overheating Risk":
 
                 matched_city = None
                 for city, (lat_c, lon_c) in city_coords.items():
-                    buffer = ee.Geometry.Point([lon_c, lat_c]).buffer(200000)
+                    buffer = ee.Geometry.Point([lon_c, lat_c]).buffer(180000)
                     if buffer.contains(point).getInfo():
                         matched_city = city
                         break
