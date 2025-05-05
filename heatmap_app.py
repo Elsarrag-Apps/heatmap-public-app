@@ -166,11 +166,12 @@ if mode == "Urban Heat Risk":
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 
 # === MODE 2: Building Overheating R# Shared layout and map
+if mode == "Building Overheating Risk":
+    run_building_overheating_risk(left_col, right_col, Map)
+
 left_col, right_col = st.columns([1, 2])
 Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 
-# Mode selector
-mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"])
 
 # =======================
 # Define function first!
