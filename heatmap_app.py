@@ -233,7 +233,7 @@ elif mode == "Building Overheating Risk":
                 circle = ee.Geometry.Point([lon_b, lat_b]).buffer(75)
                 Map.set_center(lon_b, lat_b, 14)
                 Map.addLayer(circle, {"color": color}, "Risk Circle")
-            else:
+            
             if entry is None:
                 st.warning("❌ No risk data found for this selection.")
 
