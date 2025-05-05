@@ -278,18 +278,30 @@ elif mode == "Building Overheating Risk":
                 else:
                     st.error(f"🚫 No data for city: {matched_city}")
 
+         if entry:
+            level = entry["level"]
+            label = risk_categories[level]["label"]
+            scenario = entry["scenario"]
+            color = risk_categories[level]["color"]
 
-        with right_col:
-            st.markdown("### Risk Map")
-           if entry:
-            st.markdown(f"""
-            <div style='font-size:18px; font-weight:bold; margin-bottom:10px;'>
-            🛑 Risk Level {level} – {label}<br>
-            <span style='font-size:14px; font-weight:normal;'>{scenario}</span>
-            </div>
-            """, unsafe_allow_html=True)
-            Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
-            st.markdown(risk_legend_html, unsafe_allow_html=True)
+            with right_col:
+                st.markdown("### Risk Map")
+
+                st.markdown(f"""
+                <div style='font-size:18px; font-weight:bold; margin-bottom:10px;'>
+                🛑 Risk Level {level} – {label}<br>
+                <span style='font-size:14px; font-weight:normal;'>{scenario}</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+                Map.set_center(lon_b, lat_b, 14)
+                circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
+                Map.addLayer(circle, {"color": color}, "Risk Circle")
+
+                Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+                st.markdown(risk_legend_html, unsafe_allow_html=True)
+
+
 
     run_building_overheating_risk(left_col, right_col, Map)
 
