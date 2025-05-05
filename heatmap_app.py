@@ -219,6 +219,8 @@ elif mode == "Building Overheating Risk":
         
             }
 
+            st.write("🔍 Lookup path:", matched_city, building_type, age_band, mitigation, climate)
+
             entry = risk_data.get(matched_city, {}).get(building_type, {}).get(age_band, {}).get(mitigation, {}).get(climate)
             if entry:
                 level = entry["level"]
@@ -232,7 +234,28 @@ elif mode == "Building Overheating Risk":
                 Map.set_center(lon_b, lat_b, 14)
                 Map.addLayer(circle, {"color": color}, "Risk Circle")
             else:
+            if entry is None:
                 st.warning("❌ No risk data found for this selection.")
+
+                    # 🔍 Optional debug output
+                city_data = risk_data.get(matched_city)
+                if city_data:
+                    type_data = city_data.get(building_type)
+                    if not type_data:
+                        st.info(f"❓ Building type '{building_type}' not found in {matched_city}")
+                        st.write("✅ Available types:", list(city_data.keys()))
+                    elif age_band not in type_data:
+                        st.info(f"❓ Age band '{age_band}' not found for {building_type}")
+                        st.write("✅ Available age bands:", list(type_data.keys()))
+                    elif mitigation not in type_data[age_band]:
+                        st.info(f"❓ Mitigation '{mitigation}' not found")
+                        st.write("✅ Available strategies:", list(type_data[age_band].keys()))
+                    elif climate not in type_data[age_band][mitigation]:
+                        st.info(f"❓ Climate '{climate}' not found")
+                        st.write("✅ Available climates:", list(type_data[age_band][mitigation].keys()))
+                else:
+                    st.error(f"🚫 No data for city: {matched_city}")
+
 
         with right_col:
             st.markdown("### Risk Map")
