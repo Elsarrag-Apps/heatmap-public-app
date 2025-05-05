@@ -8,18 +8,19 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from geopy.distance import geodesic
 
-
-
-# Page setup
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
-mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
-
 st.markdown("""
 <div style="display: flex; align-items: center; gap: 20px; padding-bottom: 10px;">
     <img src="ukgbc_logo.png" width="100"/>
     <img src="hoarelea_logo.png" width="100"/>
 </div>
 """, unsafe_allow_html=True)
+
+
+# Page setup
+st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
+mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
+
+
 
 
 
