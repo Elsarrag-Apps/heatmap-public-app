@@ -178,8 +178,7 @@ elif mode == "Building Overheating Risk":
                 point = ee.Geometry.Point([lon_b, lat_b])
                 st.session_state.user_coords = (lat_b, lon_b)
 
-                
-           
+                       
                 city_coords = {
                     "Leeds": (53.8008, -1.5491),
                     "Nottingham": (52.9548, -1.1581),
