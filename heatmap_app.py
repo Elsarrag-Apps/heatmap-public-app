@@ -75,10 +75,10 @@ if mode == "Urban Heat Risk":
             .filterBounds(aoi) \
             .map(cloud_mask) \
             .filter(ee.Filter.lt('CLOUD_COVER', cloud_cover)) \
-            .median()
+            .mean()
 
         ndvi = IC.normalizedDifference(['B5', 'B4']).rename('NDVI')
-        ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), aoi, 30)
+        ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), geometry = aoi, scale = 30, maxPixels=1e9)
         ndvi_mean = ee.Number(ndvi_stats.get('NDVI_mean'))
         ndvi_min = ee.Number(ndvi_stats.get('NDVI_min'))
         ndvi_max = ee.Number(ndvi_stats.get('NDVI_max'))
@@ -88,13 +88,13 @@ if mode == "Urban Heat Risk":
         em = fv.multiply(0.004).add(0.986).rename('EM')
 
         lst = thermal.expression(
-            '(tb / (1 + (0.00115 * (tb / 0.4836)) * log(em))) - 273.15',
+            '(tb / (1 + (0.00115 * (tb / 0.48359547432)) * log(em))) - 273.15',
             {'tb': thermal.select('B10'), 'em': em}
         ).rename('LST')
-        lst_mean = lst.reduceRegion(ee.Reducer.mean(), aoi, 30).get('LST')
+        lst_mean = lst.reduceRegion(ee.Reducer.mean(), geometry = aoi, scale = 30, maxPixels=1e9).get('LST')
 
         utfvi = lst.subtract(ee.Image.constant(lst_mean)).divide(lst).rename('UTFVI')
-        utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), aoi, 30).get('UTFVI')
+        utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), geometry = aoi, scale = 30, maxPixels=1e9).get('UTFVI')
 
         st.session_state.map_center = [lat, lon]
         st.session_state.lst = lst.clip(aoi)
