@@ -178,7 +178,9 @@ elif mode == "Building Overheating Risk":
                 point = ee.Geometry.Point([lon_b, lat_b])
                 st.session_state.user_coords = (lat_b, lon_b)
 
-                       
+              # ✅ Define postcode coordinates before using in geodesic
+                postcode_coords = (lat_b, lon_b)
+      
                 city_coords = {
                     "Leeds": (53.8008, -1.5491),
                     "Nottingham": (52.9548, -1.1581),
@@ -198,12 +200,15 @@ elif mode == "Building Overheating Risk":
                 st.session_state.selected_city = matched_city
                 st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
 
-
-                if matched_city:
-                    st.success(f"📌 Matched to: {matched_city}")
-                    st.session_state.selected_city = matched_city
+                # Optional: 50m visual circle
+                try:
                     display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
                     st.session_state.display_circle = display_circle
+                except Exception as e:
+                    st.warning(f"⚠️ Failed to create display circle: {e}")
+
+
+               
 
         with right_col:
             st.markdown("### Building Risk Map")
