@@ -175,12 +175,14 @@ mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Ri
 # =======================
 # Define function first!
 # =======================
-def run_building_overheating_risk(left_col, right_col, Map):
+
+
+   def run_building_overheating_risk(left_col, right_col, Map):
     with left_col:
         st.markdown("## 🏢 Building Overheating Risk Tool")
 
         postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
-        locate = st.button("Locate and Analyze")
+        locate = st.button("Locate and Analyze", key="locate_btn")
 
         building_type = st.selectbox("Select Building Type", [
             "Low-Rise Residential", "High-Rise Residential", "Office",
@@ -191,7 +193,7 @@ def run_building_overheating_risk(left_col, right_col, Map):
             "Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"
         ], key="age_band")
 
-        mitigation = st.radio("Mitigation Strategy", ["Baseline", "Passive", "Active"], key="mitigation")
+        mitigation = st.radio("Mitigation Strategy", ["Baseline", "Passive", "Active"], key="mitigation_strategy")
 
     if locate:
         location_b = geocode_with_retry(postcode_b)
@@ -200,6 +202,7 @@ def run_building_overheating_risk(left_col, right_col, Map):
             point = ee.Geometry.Point([lon_b, lat_b])
             st.session_state.user_coords = (lat_b, lon_b)
 
+            # ✅ 1. Assign nearest city (200 km buffer)
             city_coords = {
                 "Leeds": (53.8008, -1.5491),
                 "Nottingham": (52.9548, -1.1581),
@@ -227,7 +230,7 @@ def run_building_overheating_risk(left_col, right_col, Map):
                 st.warning("⚠️ No matching analysis city found.")
                 return
 
-            # 50 m map circle
+            # ✅ 2. Create 50m display circle
             try:
                 display_circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
                 st.session_state.display_circle = display_circle
@@ -250,13 +253,3 @@ def run_building_overheating_risk(left_col, right_col, Map):
         except Exception as e:
             st.error(f"🚨 Error displaying map: {e}")
 
-# ====================
-# Call based on mode
-# ====================
-if mode == "Building Overheating Risk":
-    run_building_overheating_risk(left_col, right_col, Map)
-
-
-   
-
-   
