@@ -280,7 +280,7 @@ elif mode == "Building Overheating Risk":
         with right_col:
             st.markdown("### Risk Map")
             st.markdown(f"<div style='font-size:24px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
-            Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+            Map.to_streamlit(width=700, height=100, scrolling=True, add_layer_control=True)
             st.markdown(risk_legend_html, unsafe_allow_html=True)
 
     run_building_overheating_risk(left_col, right_col, Map)
