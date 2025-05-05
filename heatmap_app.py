@@ -9,17 +9,17 @@ from geopy.exc import GeocoderTimedOut
 from geopy.distance import geodesic
 
 
-col1, col2 = st.columns([1, 1])
-with col1:
-    st.image("ukgbc_logo.png", width=100)
-with col2:
-    st.image("hoarelea_logo.png", width=100)
+
 
 # Page setup
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
 
-
+col1, col2 = st.columns([1, 1])
+with col1:
+    st.image("ukgbc_logo.png", width=100)
+with col2:
+    st.image("hoarelea_logo.png", width=100)
 
 
 
