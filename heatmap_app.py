@@ -8,13 +8,12 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from geopy.distance import geodesic
 
-st.markdown("""
-<div style="display: flex; align-items: center; gap: 20px; padding-bottom: 10px;">
-    <img src="ukgbc_logo.png" width="100"/>
-    <img src="hoarelea_logo.png" width="100"/>
-</div>
-""", unsafe_allow_html=True)
 
+col1, col2 = st.columns([1, 1])
+with col1:
+    st.image("ukgbc_logo.png", width=100)
+with col2:
+    st.image("hoarelea_logo.png", width=100)
 
 # Page setup
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
