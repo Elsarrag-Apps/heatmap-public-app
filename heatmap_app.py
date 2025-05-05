@@ -44,7 +44,7 @@ Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 # -------------------------------
 if mode == "Urban Heat Risk":
     with left_col:
-        st.markdown("## 🏢 Urban Hrat Island Risk Tool")
+        st.markdown("## 🏢 Urban Heat Island Risk Tool")
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
         buffer_radius = st.slider("Buffer radius (meters)", 100, 6000, 500, key="urban_buf")
         selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key="urban_year")
@@ -215,10 +215,21 @@ elif mode == "Building Overheating Risk":
 
             st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
            
-            risk_data = {**risk_data_office,**risk_data_lowrise,**risk_data_highrise,**risk_data_school,**risk_data_carehome,**risk_data_healthcare,
-        
-            }
+            risk_data = {}
 
+# Merge each building type under city keys
+            for city in ["London", "Leeds", "Nottingham", "Glasgow", "Cardiff", "Swindon"]:
+                risk_data[city] = {
+                    **risk_data_office.get(city, {}),
+                    **risk_data_lowrise.get(city, {}),
+                    **risk_data_highrise.get(city, {}),
+                    **risk_data_school.get(city, {}),
+                    **risk_data_carehome.get(city, {}),
+                    **risk_data_healthcare.get(city, {}),
+                }
+
+          
+            
             st.write("🔍 Lookup path:", matched_city, building_type, age_band, mitigation, climate)
 
             entry = risk_data.get(matched_city, {}).get(building_type, {}).get(age_band, {}).get(mitigation, {}).get(climate)
