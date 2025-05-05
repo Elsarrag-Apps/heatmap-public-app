@@ -45,10 +45,10 @@ Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
 if mode == "Urban Heat Risk":
     with left_col:
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
-        buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500, key="urban_buf")
+        buffer_radius = st.slider("Buffer radius (meters)", 100, 6000, 500, key="urban_buf")
         selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key="urban_year")
         date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key="urban_daterange")
-        cloud_cover = st.slider("Cloud Cover Threshold (%)", 0, 50, 20, key="urban_cloud")
+        cloud_cover = st.slider("Cloud Cover Threshold (%)", 5, 50, 20, key="urban_cloud")
         run_analysis = st.button("Run Analysis", key="urban_run")
 
     if run_analysis:
@@ -187,7 +187,11 @@ elif mode == "Building Overheating Risk":
         with left_col:
             st.markdown("## 🏢 Building Overheating Risk Tool")
             postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
-            building_type = st.selectbox("Building Type", ["Low-rise Residential","High-rise Residential", "Office","School", "Carehome","Healthcare"], key="btype")
+            building_type = st.selectbox("Building Type", [
+    "Low-Rise Residential", "High-Rise Residential", "Office",
+    "School", "Care Home", "Healthcare"
+], key="btype")
+
             age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
             mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], key="mitigation")
             climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
@@ -231,8 +235,8 @@ elif mode == "Building Overheating Risk":
 
                 st.markdown(f"<div style='font-size:18px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
 
-                circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
-                Map.set_center(lon_b, lat_b, 15)
+                circle = ee.Geometry.Point([lon_b, lat_b]).buffer(75)
+                Map.set_center(lon_b, lat_b, 14)
                 Map.addLayer(circle, {"color": color}, "Risk Circle")
             else:
                 st.warning("❌ No risk data found for this selection.")
