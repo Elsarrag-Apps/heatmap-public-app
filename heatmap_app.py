@@ -46,7 +46,7 @@ if mode == "Urban Heat Risk":
     with left_col:
         st.markdown("## 🏢 Urban Heat Island Risk Tool")
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
-        buffer_radius = st.slider("Buffer radius (meters)", 100, 30000, 500, key="urban_buf")
+        buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500, key="urban_buf")
         selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key="urban_year")
         date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key="urban_daterange")
         cloud_cover = st.slider("Cloud Cover Threshold (%)", 5, 50, 20, key="urban_cloud")
@@ -242,7 +242,7 @@ elif mode == "Building Overheating Risk":
                 st.markdown(f"<div style='font-size:18px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
 
                 circle = ee.Geometry.Point([lon_b, lat_b]).buffer(100)
-                Map.set_center(lon_b, lat_b, 25)
+                Map.set_center(lon_b, lat_b, 18)
                 Map.addLayer(circle, {"color": color}, "Risk Circle")
             
             if entry is None:
