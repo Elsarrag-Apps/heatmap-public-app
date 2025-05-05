@@ -209,44 +209,105 @@ elif mode == "Building Overheating Risk":
 
     run_building_overheating_risk(left_col, right_col, Map)
 
-# Build and preview the full risk lookup structure for one building type (Office)
+
+
+# Build complete overheating risk dataset for Office buildings
 risk_data = {
     "London": {
         "Office": {
-            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
-            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
-            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
-            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
-            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
+            "Pre-1945": {
+                "Baseline": {"level": 5, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 4, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 3, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "1945–1970": {
+                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "1970–2000": {
+                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "2000–2020": {
+                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "New Build": {
+                "Baseline": {"level": 2, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 1, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            }
         }
     },
     "Leeds": {
         "Office": {
-            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
-            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
-            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
-            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
-            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
+            "Pre-1945": {
+                "Baseline": {"level": 5, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 4, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 3, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "1945–1970": {
+                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "1970–2000": {
+                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "2000–2020": {
+                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "New Build": {
+                "Baseline": {"level": 2, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 1, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            }
+        }
+    },
+    "Nottingham": {
+        "Office": {
+            "Pre-1945": {
+                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "1945–1970": {
+                "Baseline": {"level": 4, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 3, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 2, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "1970–2000": {
+                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "2000–2020": {
+                "Baseline": {"level": 3, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 2, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            },
+            "New Build": {
+                "Baseline": {"level": 2, "scenario": "2080 High Scenario (4°C)"},
+                "Passive": {"level": 1, "scenario": "2080 Med Scenario (3°C)"},
+                "Active": {"level": 1, "scenario": "2080 Low Scenario (2°C)"}
+            }
         }
     }
 }
 
-# Example test selection
-city = "London"
-btype = "Office"
-age_band = "1945–1970"
-mitigation = "Passive"
+risk_data["Nottingham"]["Office"]["2000–2020"]["Passive"]  # Preview one entry
 
-risk_value = risk_data.get(city, {}).get(btype, {}).get(age_band, {}).get(mitigation)
+# Generate a complete block of logic for risk display in the Building Overheating Risk tool
+# Includes dynamic text output, color circle, and risk category legend
 
-if risk_value:
-    result = f"✅ Risk Level: {risk_value} for {city} / {btype} / {age_band} / {mitigation}"
-else:
-    result = "❌ No risk data found for this selection."
-
-result
-
-# Define risk categories with labels and colors for mapping/display
+# Define risk display logic for Building Overheating Risk
 risk_categories = {
     1: {"label": "Low", "color": "green"},
     2: {"label": "Medium", "color": "yellow"},
@@ -255,47 +316,32 @@ risk_categories = {
     5: {"label": "Extreme", "color": "darkred"}
 }
 
-# Extend building risk data structure (example: Office for London + Leeds)
-risk_data = {
-    "London": {
-        "Office": {
-            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
-            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
-            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
-            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
-            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
-        }
-    },
-    "Leeds": {
-        "Office": {
-            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
-            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
-            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
-            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
-            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
-        }
-    }
-}
-
-# Test one lookup and match category
-city = "Leeds"
+# Use test case
+city = "Nottingham"
 btype = "Office"
-age_band = "Pre-1945"
-strategy = "Baseline"
+age = "2000–2020"
+strategy = "Passive"
 
-risk_level = risk_data.get(city, {}).get(btype, {}).get(age_band, {}).get(strategy)
-
-if risk_level:
-    label = risk_categories[risk_level]["label"]
-    color = risk_categories[risk_level]["color"]
-    summary = f"Risk Level {risk_level} ({label}), Color: {color}"
+# Look up risk
+entry = risk_data.get(city, {}).get(btype, {}).get(age, {}).get(strategy)
+if entry:
+    risk_level = entry["level"]
+    scenario = entry["scenario"]
+    risk_label = risk_categories[risk_level]["label"]
+    risk_color = risk_categories[risk_level]["color"]
+    summary = {
+        "risk_level": risk_level,
+        "risk_label": risk_label,
+        "scenario": scenario,
+        "color": risk_color
+    }
 else:
-    summary = "❌ No risk data found for this selection."
+    summary = {
+        "risk_level": None,
+        "risk_label": "Unavailable",
+        "scenario": "No data",
+        "color": "gray"
+    }
 
 summary
-
-
-
-
-
 
