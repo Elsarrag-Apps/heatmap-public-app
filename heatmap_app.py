@@ -190,8 +190,8 @@ elif mode == "Building Overheating Risk":
    
 
                 matched_city, distance_km = min(
-                ((city, geodesic(postcode_coords, coords).km) for city, coords in city_coords.items()),
-                key=lambda x: x[1]
+                    ((city, geodesic(postcode_coords, coords).km) for city, coords in city_coords.items()),
+                    key=lambda x: x[1]
                 )
 
                 st.session_state.selected_city = matched_city
