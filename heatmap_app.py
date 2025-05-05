@@ -176,6 +176,8 @@ elif mode == "Building Overheating Risk":
                 point = ee.Geometry.Point([lon_b, lat_b])
                 st.session_state.user_coords = (lat_b, lon_b)
 
+                from geopy.distance import geodesic
+
                 city_coords = {
                     "Leeds": (53.8008, -1.5491),
                     "Nottingham": (52.9548, -1.1581),
@@ -184,13 +186,17 @@ elif mode == "Building Overheating Risk":
                     "Cardiff": (51.4816, -3.1791),
                     "Swindon": (51.5558, -1.7797)
                 }
+     
+   
 
-                matched_city = None
-                for city, (lat_c, lon_c) in city_coords.items():
-                    buffer = ee.Geometry.Point([lon_c, lat_c]).buffer(180000)
-                    if buffer.contains(point).getInfo():
-                        matched_city = city
-                        break
+                matched_city, distance_km = min(
+                ((city, geodesic(postcode_coords, coords).km) for city, coords in city_coords.items()),
+                key=lambda x: x[1]
+                )
+
+                st.session_state.selected_city = matched_city
+                st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
+
 
                 if matched_city:
                     st.success(f"📌 Matched to: {matched_city}")
