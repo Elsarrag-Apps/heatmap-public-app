@@ -290,12 +290,12 @@ elif mode == "Building Overheating Risk":
                     st.markdown(f"""
                     <div style='font-size:18px; font-weight:bold; margin-bottom:10px;'>
                     🛑 Risk Level {level} – {label}<br>
-                    <span style='font-size:14px; font-weight:normal;'>{scenario}</span>
+                    <span style='font-size:36px; font-weight:normal;'>{scenario}</span>
                     </div>
                     """, unsafe_allow_html=True)
 
-                    Map.set_center(lon_b, lat_b, 14)
-                    circle = ee.Geometry.Point([lon_b, lat_b]).buffer(50)
+                    Map.set_center(lon_b, lat_b, 18)
+                    circle = ee.Geometry.Point([lon_b, lat_b]).buffer(100)
                     Map.addLayer(circle, {"color": color}, "Risk Circle")
 
                     Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
