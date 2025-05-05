@@ -14,11 +14,6 @@ from geopy.distance import geodesic
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
 
-
-# ✅ MUST BE FIRST Streamlit command
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
-
-# ✅ Logos aligned to the left, close together
 st.markdown("""
 <div style="display: flex; align-items: center; gap: 20px; padding-bottom: 10px;">
     <img src="ukgbc_logo.png" width="100"/>
