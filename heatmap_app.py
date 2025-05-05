@@ -6,6 +6,8 @@ import tempfile
 import streamlit as st
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+from geopy.distance import geodesic
+
 
 # Page setup
 st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
@@ -176,8 +178,8 @@ elif mode == "Building Overheating Risk":
                 point = ee.Geometry.Point([lon_b, lat_b])
                 st.session_state.user_coords = (lat_b, lon_b)
 
-                from geopy.distance import geodesic
-
+                
+           
                 city_coords = {
                     "Leeds": (53.8008, -1.5491),
                     "Nottingham": (52.9548, -1.1581),
