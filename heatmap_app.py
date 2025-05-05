@@ -12,7 +12,7 @@ from geopy.distance import geodesic
 
 
 # Page setup
-st.markdown("<h1 style='font-size:32px; color:#444;'>Urban Heat Risk Viewer</h1>", unsafe_allow_html=True)
+st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
 col1, col2 = st.columns([1, 1])
 with col1:
@@ -288,9 +288,9 @@ elif mode == "Building Overheating Risk":
                     st.markdown("### Risk Map")
 
                     st.markdown(f"""
-                    <div style='font-size:24px; font-weight:bold; margin-bottom:10px;'>
+                    <div style='font-size:20px; font-weight:bold; margin-bottom:10px;'>
                     🛑 Risk Level {level} – {label}<br>
-                    <span style='font-size:20px; font-weight:normal;'>{scenario}</span>
+                    <span style='font-size:18px; font-weight:normal;'>{scenario}</span>
                     </div>
                     """, unsafe_allow_html=True)
 
