@@ -148,7 +148,6 @@ if mode == "Urban Heat Risk":
             st.write(f"### Mean LST: {st.session_state.lst_mean:.2f} °C")
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
-
 # -------------------------------
 # MODE 2: Building Overheating Risk
 # -------------------------------
@@ -222,12 +221,13 @@ elif mode == "Building Overheating Risk":
             else:
                 st.warning("❌ No risk data found for this selection.")
 
-         with right_col:
+        with right_col:
             st.markdown("### Risk Map")
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
             st.markdown(risk_legend_html, unsafe_allow_html=True)
 
     run_building_overheating_risk(left_col, right_col, Map)
+
 
 
 
