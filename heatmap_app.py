@@ -152,7 +152,7 @@ if mode == "Urban Heat Risk":
 # MODE 2: Building Overheating Risk
 # -------------------------------
 elif mode == "Building Overheating Risk":
-
+    from risk_data_office import risk_data_office
     from geopy.distance import geodesic
 
     def run_building_overheating_risk(left_col, right_col, Map):
