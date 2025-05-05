@@ -241,8 +241,8 @@ elif mode == "Building Overheating Risk":
 
                 st.markdown(f"<div style='font-size:18px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
 
-                circle = ee.Geometry.Point([lon_b, lat_b]).buffer(75)
-                Map.set_center(lon_b, lat_b, 14)
+                circle = ee.Geometry.Point([lon_b, lat_b]).buffer(100)
+                Map.set_center(lon_b, lat_b, 10)
                 Map.addLayer(circle, {"color": color}, "Risk Circle")
             
             if entry is None:
