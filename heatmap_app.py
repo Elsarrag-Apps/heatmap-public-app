@@ -208,3 +208,94 @@ elif mode == "Building Overheating Risk":
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
     run_building_overheating_risk(left_col, right_col, Map)
+
+# Build and preview the full risk lookup structure for one building type (Office)
+risk_data = {
+    "London": {
+        "Office": {
+            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
+            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
+            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
+            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
+            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
+        }
+    },
+    "Leeds": {
+        "Office": {
+            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
+            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
+            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
+            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
+            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
+        }
+    }
+}
+
+# Example test selection
+city = "London"
+btype = "Office"
+age_band = "1945–1970"
+mitigation = "Passive"
+
+risk_value = risk_data.get(city, {}).get(btype, {}).get(age_band, {}).get(mitigation)
+
+if risk_value:
+    result = f"✅ Risk Level: {risk_value} for {city} / {btype} / {age_band} / {mitigation}"
+else:
+    result = "❌ No risk data found for this selection."
+
+result
+
+# Define risk categories with labels and colors for mapping/display
+risk_categories = {
+    1: {"label": "Low", "color": "green"},
+    2: {"label": "Medium", "color": "yellow"},
+    3: {"label": "High", "color": "orange"},
+    4: {"label": "Very High", "color": "red"},
+    5: {"label": "Extreme", "color": "darkred"}
+}
+
+# Extend building risk data structure (example: Office for London + Leeds)
+risk_data = {
+    "London": {
+        "Office": {
+            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
+            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
+            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
+            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
+            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
+        }
+    },
+    "Leeds": {
+        "Office": {
+            "Pre-1945": {"Baseline": 5, "Passive": 4, "Active": 3},
+            "1945–1970": {"Baseline": 4, "Passive": 3, "Active": 2},
+            "1970–2000": {"Baseline": 3, "Passive": 2, "Active": 2},
+            "2000–2020": {"Baseline": 3, "Passive": 2, "Active": 1},
+            "New Build": {"Baseline": 2, "Passive": 1, "Active": 1}
+        }
+    }
+}
+
+# Test one lookup and match category
+city = "Leeds"
+btype = "Office"
+age_band = "Pre-1945"
+strategy = "Baseline"
+
+risk_level = risk_data.get(city, {}).get(btype, {}).get(age_band, {}).get(strategy)
+
+if risk_level:
+    label = risk_categories[risk_level]["label"]
+    color = risk_categories[risk_level]["color"]
+    summary = f"Risk Level {risk_level} ({label}), Color: {color}"
+else:
+    summary = "❌ No risk data found for this selection."
+
+summary
+
+
+
+
+
+
