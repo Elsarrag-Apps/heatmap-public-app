@@ -249,7 +249,7 @@ elif mode == "Building Overheating Risk":
                 scenario = entry["scenario"]
                 color = risk_categories[level]["color"]
 
-                st.markdown(f"<div style='font-size:18px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
+                
 
                 circle = ee.Geometry.Point([lon_b, lat_b]).buffer(100)
                 Map.set_center(lon_b, lat_b, 18)
@@ -280,6 +280,7 @@ elif mode == "Building Overheating Risk":
 
         with right_col:
             st.markdown("### Risk Map")
+            st.markdown(f"<div style='font-size:24px;'><strong>🛑 Risk Level {level} – {label}</strong><br><em>{scenario}</em></div>", unsafe_allow_html=True)
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
             st.markdown(risk_legend_html, unsafe_allow_html=True)
 
