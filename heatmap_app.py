@@ -8,11 +8,17 @@ from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from geopy.distance import geodesic
 
-col1, col2 = st.columns([1, 1])
-with col1:
-    st.image("ukgbc_logo.png", width=120)
-with col2:
-    st.image("hoarelea_logo.png", width=120)
+
+# ✅ MUST BE FIRST Streamlit command
+st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
+
+# ✅ Logos aligned to the left, close together
+st.markdown("""
+<div style="display: flex; align-items: center; gap: 20px; padding-bottom: 10px;">
+    <img src="ukgbc_logo.png" width="100"/>
+    <img src="hoarelea_logo.png" width="100"/>
+</div>
+""", unsafe_allow_html=True)
 
 
 # Page setup
