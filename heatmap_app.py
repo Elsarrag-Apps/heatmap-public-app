@@ -206,7 +206,7 @@ elif mode == "Building Overheating Risk":
 
             st.success(f"📌 Nearest city: {matched_city} ({distance_km:.1f} km)")
 
-            entry = risk_data.get(matched_city, {}).get(building_type, {}).get(age_band, {}).get(mitigation, {}).get(climate)
+            entry = risk_data_office.get(matched_city, {}).get(building_type, {}).get(age_band, {}).get(mitigation, {}).get(climate)
             if entry:
                 level = entry["level"]
                 label = risk_categories[level]["label"]
