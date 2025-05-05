@@ -222,9 +222,12 @@ elif mode == "Building Overheating Risk":
             else:
                 st.warning("❌ No risk data found for this selection.")
 
-        with right_col:
+         with right_col:
             st.markdown("### Risk Map")
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
             st.markdown(risk_legend_html, unsafe_allow_html=True)
 
- run_building_overheating_risk(left_col, right_col, Map)
+    run_building_overheating_risk(left_col, right_col, Map)
+
+
+
