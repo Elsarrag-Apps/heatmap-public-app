@@ -46,7 +46,7 @@ if mode == "Urban Heat Risk":
     with left_col:
         st.markdown("## 🏢 Urban Heat Island Risk Tool")
         postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
-        buffer_radius = st.slider("Buffer radius (meters)", 100, 6000, 500, key="urban_buf")
+        buffer_radius = st.slider("Buffer radius (meters)", 100, 30000, 500, key="urban_buf")
         selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key="urban_year")
         date_range = st.selectbox("Date Range", ['Full Year', 'Summer Only'], key="urban_daterange")
         cloud_cover = st.slider("Cloud Cover Threshold (%)", 5, 50, 20, key="urban_cloud")
