@@ -202,7 +202,7 @@ elif mode == "Building Overheating Risk":
             building_type = st.selectbox("Building Type", ["Low-Rise Residential", "High-Rise Residential", "Office","School", "Care Home", "Healthcare"], key="btype")
 
             age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
-            mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], key="mitigation")
+            mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], 
                  key="mitigation",
                  help="""
                  • Baseline: Standard build with no overheating adaptation measures.
