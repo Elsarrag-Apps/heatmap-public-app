@@ -316,8 +316,7 @@ elif mode == "Building Overheating Risk":
 
                 with right_col:
                     st.markdown("### Risk Map")
-
-                      with st.expander("ℹ️ What do the Risk Levels mean?"):
+                    with st.expander("ℹ️ What do the Risk Levels mean?"):
                         if building_type == "Low-Rise Residential" or building_type == "High-Rise Residential":
                             st.markdown("""
                             - **1 – Low**: 0–3 overheating days; meets TM59/TM52 thresholds  
@@ -350,6 +349,7 @@ elif mode == "Building Overheating Risk":
                             - **4 – Very High**: Disruption to operations or patient comfort  
                             - **5 – Extreme**: 12+ days; serious health risk
                             """)  
+                      
                     
                    
                      
