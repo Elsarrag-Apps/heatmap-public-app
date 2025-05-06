@@ -203,6 +203,15 @@ elif mode == "Building Overheating Risk":
 
             age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
             mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], key="mitigation")
+                 key="mitigation",
+                 help="""
+                 • Baseline: Standard build with no overheating adaptation measures.
+                 • Passive: Includes shading, natural ventilation, thermal mass, night purge, and solar control glazing.
+                 • Active: Includes MVHR (Mechanical Ventilation with Heat Recovery), active cooling, fans, and automated systems.
+                   """
+            )
+
+             
             climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
 
         location_b = geocode_with_retry(postcode_b)
