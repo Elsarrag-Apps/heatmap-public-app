@@ -207,7 +207,7 @@ elif mode == "Building Overheating Risk":
                  help="""
                  • Baseline: Standard build with no overheating adaptation measures.
                  • Passive: Includes shading, natural ventilation, thermal mass, night purge, and solar control glazing.
-                 • Active: Includes MVHR (Mechanical Ventilation with Heat Recovery), active cooling, fans, and automated systems.
+                 • Active: Includes MVHR (Mechanical Ventilation with Heat Recovery), fans, and automated shading systems.
                    """
             )
 
