@@ -227,7 +227,7 @@ elif mode == "Building Overheating Risk":
            # )
 
              
-           climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
+            climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
                      
                    
            
