@@ -202,14 +202,29 @@ elif mode == "Building Overheating Risk":
             building_type = st.selectbox("Building Type", ["Low-Rise Residential", "High-Rise Residential", "Office","School", "Care Home", "Healthcare"], key="btype")
 
             age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
-            mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], 
-                 key="mitigation",
-                 help="""
-                 • Baseline: Standard build with no overheating adaptation measures.
-                 • Passive: Includes shading, natural ventilation, thermal mass, night purge, and solar control glazing.
-                 • Active: Includes MVHR (Mechanical Ventilation with Heat Recovery), fans, and automated shading systems.
-                   """
-            )
+            mitigation_full = st.radio(
+                "Select Mitigation Strategy",
+                [
+                  "Baseline – No adaptation measures",
+                  "Passive – Shading, natural ventilation, thermal mass, solar control",
+                  "Active – MVHR, mechanical cooling, fan systems"
+               ],
+          key="mitigation_detailed"
+          )
+
+# ✅ Clean value used for risk_data lookup
+mitigation = mitigation_full.split(" – ")[0]
+
+
+             
+           # mitigation = st.radio("Mitigation", ["Baseline", "Passive", "Active"], 
+                # key="mitigation",
+              #   help="""
+            #     • Baseline: Standard build with no overheating adaptation measures.
+             #    • Passive: Includes shading, natural ventilation, thermal mass, night purge, and solar control glazing.
+             #    • Active: Includes MVHR (Mechanical Ventilation with Heat Recovery), fans, and automated shading systems.
+                #   """
+           # )
 
              
             climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
