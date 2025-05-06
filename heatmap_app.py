@@ -131,9 +131,9 @@ if mode == "Urban Heat Risk":
                 popup=f"Postcode: {postcode}"
             ))
 
-        show_lst = st.checkbox("Show LST", value=True, key="show_lst")
+        show_lst = st.checkbox("Show Land Surface Temperature - LST", value=True, key="show_lst")
         lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6, key="lst_opacity")
-        show_utfvi = st.checkbox("Show UTFVI", value=True, key="show_utfvi")
+        show_utfvi = st.checkbox("Show Urban Thermal Field Variance Index -  UTFVI", value=True, key="show_utfvi")
         utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6, key="utfvi_opacity")
 
         if "lst" in st.session_state and show_lst:
@@ -154,7 +154,7 @@ if mode == "Urban Heat Risk":
 
     with left_col.expander("Analysis Summary", expanded=True):
         if "ndvi_mean" in st.session_state:
-            st.write(f"### Mean NDVI: {st.session_state.ndvi_mean:.2f}")
+           # st.write(f"### Mean NDVI: {st.session_state.ndvi_mean:.2f}")
             st.write(f"### Mean LST: {st.session_state.lst_mean:.2f} °C")
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
             st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
