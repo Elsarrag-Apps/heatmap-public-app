@@ -241,13 +241,13 @@ elif mode == "Building Overheating Risk":
                   """
               )
 
-          st.markdown("""
-          <small>
-          <strong>2°C:</strong> Low global warming scenario<br>
-          <strong>3°C:</strong> Medium global warming scenario<br>
-          <strong>4°C:</strong> High global warming scenario
-          </small>
-          """, unsafe_allow_html=True)
+           st.markdown("""
+           <small>
+           <strong>2°C:</strong> Low global warming scenario<br>
+           <strong>3°C:</strong> Medium global warming scenario<br>
+           <strong>4°C:</strong> High global warming scenario
+           </small>
+           """, unsafe_allow_html=True)
 
 
                   
