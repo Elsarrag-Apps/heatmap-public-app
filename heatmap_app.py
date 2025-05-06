@@ -227,7 +227,7 @@ elif mode == "Building Overheating Risk":
            # )
 
              
-            climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
+            climate = st.selectbox("Climate Scenario", ["Low global warming scenario 2°C", "Medium global warming scenario 3°C", "High global warming scenario 4°C"], key="climate")
 
         location_b = geocode_with_retry(postcode_b)
         if location_b:
