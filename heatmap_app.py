@@ -12,7 +12,7 @@ from geopy.distance import geodesic
 
 
 # Page setup
-st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
+st.set_page_config(page_title="Climate Resilience Tool", layout="wide")
 
 col1, col2 = st.columns([1, 1])
 with col1:
