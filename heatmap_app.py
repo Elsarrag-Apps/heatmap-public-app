@@ -237,18 +237,7 @@ elif mode == "Building Overheating Risk":
                       5: {"label": "Extreme", "color": "darkred"}
                   }
           
-                  risk_legend_html = """
-                  <div style="padding:10px">
-                    <h4 style="margin-bottom:5px">Risk Level Legend</h4>
-                    <div style="display:flex;flex-direction:column;font-size:14px">
-                      <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span>Low</div>
-                      <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span>Medium</div>
-                      <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span>High</div>
-                      <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span>Very High</div>
-                      <div><span style="display:inline-block;width:15px;height:15px;background-color:darkred;margin-right:6px;"></span>Extreme</div>
-                    </div>
-                  </div>
-                  """
+                  
 
          
 
