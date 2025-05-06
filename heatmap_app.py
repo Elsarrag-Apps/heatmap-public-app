@@ -229,7 +229,26 @@ elif mode == "Building Overheating Risk":
              
             climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
                      
-
+           risk_categories = {
+                      1: {"label": "Low", "color": "green"},
+                      2: {"label": "Medium", "color": "yellow"},
+                      3: {"label": "High", "color": "orange"},
+                      4: {"label": "Very High", "color": "red"},
+                      5: {"label": "Extreme", "color": "darkred"}
+                  }
+          
+                  risk_legend_html = """
+                  <div style="padding:10px">
+                    <h4 style="margin-bottom:5px">Risk Level Legend</h4>
+                    <div style="display:flex;flex-direction:column;font-size:14px">
+                      <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span>Low</div>
+                      <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span>Medium</div>
+                      <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span>High</div>
+                      <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span>Very High</div>
+                      <div><span style="display:inline-block;width:15px;height:15px;background-color:darkred;margin-right:6px;"></span>Extreme</div>
+                    </div>
+                  </div>
+                  """
 
          
 
