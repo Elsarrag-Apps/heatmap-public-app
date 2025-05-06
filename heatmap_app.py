@@ -20,7 +20,7 @@ with col1:
 with col1:
     st.image("hoarelea_logo.png", width=100)
 
-mode = st.radio("Select View Mode", ["Urban Heat Risk", "Building Overheating Risk"], key="mode_selector")
+mode = st.radio("Select View Mode", ["Building Overheating Risk", "Urban Heat Risk"], key="mode_selector")
 
 # EE auth
 try:
