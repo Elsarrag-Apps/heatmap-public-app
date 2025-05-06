@@ -16,7 +16,7 @@ st.set_page_config(page_title="Urban Heat Risk Viewer", layout="wide")
 
 col1, col2 = st.columns([1, 1])
 with col1:
-     st.image("hoarelea_logo.png", width=100)
+     st.image("hoarelea_logo.png", width=120)
 with col1:
        st.image("ukgbc_logo.png", width=70)
 
