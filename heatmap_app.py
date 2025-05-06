@@ -229,13 +229,13 @@ elif mode == "Building Overheating Risk":
              
             climate = st.selectbox("Climate Scenario", ["2°C", "3°C", "4°C"], key="climate")
                      
-           risk_categories = {
-                      1: {"label": "Low", "color": "green"},
-                      2: {"label": "Medium", "color": "yellow"},
-                      3: {"label": "High", "color": "orange"},
-                      4: {"label": "Very High", "color": "red"},
-                      5: {"label": "Extreme", "color": "darkred"}
-                  }
+                risk_categories = {
+                           1: {"label": "Low", "color": "green"},
+                           2: {"label": "Medium", "color": "yellow"},
+                           3: {"label": "High", "color": "orange"},
+                           4: {"label": "Very High", "color": "red"},
+                           5: {"label": "Extreme", "color": "darkred"}
+                       }
           
                   
 
