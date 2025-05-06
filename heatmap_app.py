@@ -205,9 +205,9 @@ elif mode == "Building Overheating Risk":
             mitigation_full = st.radio(
                 "Select Mitigation Strategy",
                 [
-                  "Baseline – No adaptation measures",
-                  "Passive – Shading, natural ventilation, thermal mass, solar control",
-                  "Active – MVHR, mechanical cooling, fan systems"
+                  "Baseline – No overheating adaptation measures",
+                  "Passive – Shading, natural ventilation, thermal mass, night purge, solar control",
+                  "Active – MVHR, fans, automated shading systems"
                ],
           key="mitigation_detailed"
           )
