@@ -212,8 +212,8 @@ elif mode == "Building Overheating Risk":
           key="mitigation_detailed"
           )
 
-# ✅ Clean value used for risk_data lookup
-mitigation = mitigation_full.split(" – ")[0]
+     # ✅ Clean value used for risk_data lookup
+          mitigation = mitigation_full.split(" – ")[0]
 
 
              
