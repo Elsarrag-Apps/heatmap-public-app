@@ -18,7 +18,7 @@ col1, col2 = st.columns([1, 1])
 with col1:
      st.image("hoarelea_logo.png", width=100)
 with col1:
-       st.image("ukgbc_logo.png", width=80)
+       st.image("ukgbc_logo.png", width=70)
 
 mode = st.radio("Select View Mode", ["Building Overheating Risk", "Urban Heat Risk"], key="mode_selector")
 
