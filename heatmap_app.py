@@ -112,9 +112,10 @@ if mode == "Urban Heat Risk":
         st.session_state.utfvi_class = (
             "Excellent" if st.session_state.utfvi_mean <= 0 else
             "Good" if st.session_state.utfvi_mean <= 0.005 else
-            "Moderate" if st.session_state.utfvi_mean <= 0.015 else
-            "Poor" if st.session_state.utfvi_mean <= 0.025 else
-            "Ecological Risk"
+            "Normal" if st.session_state.utfvi_mean <= 0.01 else
+            "Bad" if st.session_state.utfvi_mean <= 0.015 else
+            "Worse" if st.session_state.utfvi_mean <= 0.02 else
+            "Worst"
         )
 
     with right_col:
@@ -137,7 +138,7 @@ if mode == "Urban Heat Risk":
         if "lst" in st.session_state and show_lst:
             Map.addLayer(st.session_state.lst, {
                 'min': 0, 'max': 45,
-                'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
+                'palette': ['darkblue', 'blue', 'green, 'yellow', 'orange', 'red'],
                 'opacity': lst_opacity
             }, 'LST')
 
@@ -147,8 +148,8 @@ if mode == "Urban Heat Risk":
          
         if "utfvi" in st.session_state and show_utfvi:
             Map.addLayer(st.session_state.utfvi, {
-                'min': -0.005, 'max': 0.02,
-                'palette': ['blue', 'lightblue', 'lightgreen', 'yellow', 'orange', 'orangered', 'red'],
+                'min': -0.005, 'max': 0.025,
+                'palette': ['blue', 'green', 'yellow', 'orange', 'orangered', 'red'],
                 'opacity': utfvi_opacity
             }, 'UTFVI')
 
@@ -164,12 +165,12 @@ if mode == "Urban Heat Risk":
             <div>
               <h4 style="margin-bottom:5px">LST (°C)</h4>
               <div style="font-size:14px; line-height: 20px;">
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> 0–10°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:lightblue;margin-right:6px;"></span> 10–20°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 20–30°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 30–40°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 40°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span>  0-7.5°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> 7.5–15°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 15–22.5°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 22.5–30°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 30–37.5°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 37.5-45°C</div>
               </div>
             </div>
           
@@ -177,12 +178,13 @@ if mode == "Urban Heat Risk":
           <div>
             <h4 style="margin-bottom:5px">UTFVI (Ecological Evaluation)</h4>
             <div style="font-size:14px; line-height: 20px;">
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> &lt; 0 — Excellent</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 0–0.005 — Good</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0.005–0.010 — Normal</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.010–0.015 — Bad</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 0.015–0.020 — Worse</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:darkred;margin-right:6px;"></span> &gt; 0.020 — Worst</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> &lt; 0 — Excellent</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> &lt; 0 — Good</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0–0.005 — Normal</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.005–0.010 — Bad</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.010–0.015 — orse</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 0.015–0.020 — Worst</div>
+             
             </div>
           </div>
 
