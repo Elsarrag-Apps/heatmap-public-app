@@ -9,8 +9,6 @@ from geopy.exc import GeocoderTimedOut
 from geopy.distance import geodesic
 
 
-
-
 # Page setup
 st.set_page_config(page_title="Climate Resilience Tool", layout="wide")
 
@@ -143,8 +141,22 @@ if mode == "Urban Heat Risk":
                 'opacity': lst_opacity
             }, 'LST')
 
-           
-                
+            Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+
+           st.markdown("#### 🔍 LST Color Legend")
+              st.markdown("""
+              <div style="padding:10px">
+                <div style="display:flex;flex-direction:column;font-size:14px">
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> 0–10°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:lightblue;margin-right:6px;"></span> 10–20°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 20–30°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 30–40°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 40°C</div>
+                </div>
+              </div>
+              """, unsafe_allow_html=True)
+                          
 
          
         if "utfvi" in st.session_state and show_utfvi:
