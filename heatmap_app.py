@@ -147,8 +147,8 @@ if mode == "Urban Heat Risk":
          
         if "utfvi" in st.session_state and show_utfvi:
             Map.addLayer(st.session_state.utfvi, {
-                'min': -0.4, 'max': 0.4,
-                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
+                'min': -0.01, 'max': 0.025,
+                'palette': ['blue', 'green', 'yellow', 'orange', 'red', 'darked'],
                 'opacity': utfvi_opacity
             }, 'UTFVI')
 
@@ -173,20 +173,21 @@ if mode == "Urban Heat Risk":
               </div>
             </div>
           
-            <!-- UTFVI Legend -->
-            <div>
-              <h4 style="margin-bottom:5px">UTFVI</h4>
-              <div style="font-size:14px; line-height: 20px;">
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> ≤ -0.4</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> -0.2</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.2</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> ≥ 0.4</div>
-              </div>
+           <!-- UTFVI Legend -->
+          <div>
+            <h4 style="margin-bottom:5px">UTFVI (Ecological Evaluation)</h4>
+            <div style="font-size:14px; line-height: 20px;">
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> &lt; 0 — Excellent</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 0–0.005 — Good</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0.005–0.010 — Normal</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.010–0.015 — Bad</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 0.015–0.020 — Worse</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:darkred;margin-right:6px;"></span> &gt; 0.020 — Worst</div>
             </div>
-          
           </div>
-          """, height=240)
+
+      
+               """, height=240)
                    
                          
                     
