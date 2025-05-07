@@ -155,34 +155,44 @@ if mode == "Urban Heat Risk":
         Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
         st.markdown("#### 🔍 Map Legends")
-        st.markdown("""
-          <div style="display: flex; gap: 40px; padding: 10px 0;">
-            <!-- LST Legend -->
-            <div>
-              <h4 style="margin-bottom:5px">LST (°C)</h4>
-              <div style="display:flex;flex-direction:column;font-size:14px">
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> 0–10°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:lightblue;margin-right:6px;"></span> 10–20°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 20–30°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 30–40°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 40°C</div>
+       
+        st.markdown("<div style='display: flex; gap: 40px;'>", unsafe_allow_html=True)
+
+          # LST Legend
+        if show_lst:
+              st.markdown("""
+              <div>
+                <h4 style="margin-bottom:5px">LST (°C)</h4>
+                <div style="display:flex;flex-direction:column;font-size:14px">
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> 0–10°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:lightblue;margin-right:6px;"></span> 10–20°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 20–30°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 30–40°C</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 40°C</div>
+                </div>
               </div>
-            </div>
+              """, unsafe_allow_html=True)
           
-            <!-- UTFVI Legend -->
-            <div>
-              <h4 style="margin-bottom:5px">UTFVI</h4>
-              <div style="display:flex;flex-direction:column;font-size:14px">
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> ≤ -0.4</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> -0.2</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.2</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> ≥ 0.4</div>
-              </div>
-            </div>
-          </div>
-          """, unsafe_allow_html=True)
+          # UTFVI Legend
+          if show_utfvi:
+              st.markdown("""
+              <div>
+                <h4 style="margin-bottom:5px">UTFVI</h4>
+                <div style="display:flex;flex-direction:column;font-size:14px">
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> ≤ -0.4</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> -0.2</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.2</div>
+                  <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> ≥ 0.4</div>
+                </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# Close flex div
+st.markdown("</div>", unsafe_allow_html=True)
+
+          
 
 
     with left_col.expander("Analysis Summary", expanded=True):
