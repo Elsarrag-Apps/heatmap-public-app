@@ -149,8 +149,8 @@ if mode == "Urban Heat Risk":
                colors=["darkblue", "blue", "lightblue", "green", "orange", "red"]
            )
 
-                st.markdown("""
-                <div style="padding:10px">
+           st.markdown("""
+           <div style="padding:10px">
                       <h4 style="margin-bottom:5px">LST (°C)</h4>
                       <div style="display:flex;flex-direction:column;font-size:14px">
                         <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
