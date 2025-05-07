@@ -141,10 +141,21 @@ if mode == "Urban Heat Risk":
                 'opacity': lst_opacity
             }, 'LST')
 
-     #       Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+    
+                                 
 
-            st.markdown("#### 🔍 LST Color Legend")
-            st.markdown("""
+         
+        if "utfvi" in st.session_state and show_utfvi:
+            Map.addLayer(st.session_state.utfvi, {
+                'min': -0.4, 'max': 0.4,
+                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
+                'opacity': utfvi_opacity
+            }, 'UTFVI')
+
+        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+
+        st.markdown("#### 🔍 LST Color Legend")
+        st.markdown("""
                <div style="padding:10px">
                 <div style="display:flex;flex-direction:column;font-size:14px">
                   <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
@@ -156,17 +167,6 @@ if mode == "Urban Heat Risk":
                 </div>
               </div>
               """, unsafe_allow_html=True)
-                          
-
-         
-        if "utfvi" in st.session_state and show_utfvi:
-            Map.addLayer(st.session_state.utfvi, {
-                'min': -0.4, 'max': 0.4,
-                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
-                'opacity': utfvi_opacity
-            }, 'UTFVI')
-
-        Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
     with left_col.expander("Analysis Summary", expanded=True):
         if "ndvi_mean" in st.session_state:
