@@ -178,12 +178,12 @@ if mode == "Urban Heat Risk":
           <div>
             <h4 style="margin-bottom:5px">UTFVI (Ecological Evaluation)</h4>
             <div style="font-size:14px; line-height: 20px;">
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> &lt; 0 — Excellent</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> &lt; 0 — Good</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0–0.005 — Normal</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.005–0.010 — Bad</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.010–0.015 — Worse</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 0.015–0.020 — Worst</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> &lt; <0 — Excellent</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> &lt; 0–0.005 — Good</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0.005–0.010 — Normal</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.01–0.015 — Bad</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.015–0.02 — Worse</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 0.020 — Worst</div>
              
             </div>
           </div>
