@@ -155,7 +155,7 @@ if mode == "Urban Heat Risk":
         Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
        
-       if show_lst or show_utfvi:
+        if show_lst or show_utfvi:
               st.markdown("#### 🔍 Map Legends")
               st.markdown("<div style='display: flex; gap: 40px;'>", unsafe_allow_html=True)
           
