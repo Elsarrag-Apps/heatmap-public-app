@@ -175,7 +175,7 @@ if mode == "Urban Heat Risk":
               """, unsafe_allow_html=True)
           
           # UTFVI Legend
-       if show_utfvi:
+      if show_utfvi:
              st.markdown("""
              <div>
                 <h4 style="margin-bottom:5px">UTFVI</h4>
