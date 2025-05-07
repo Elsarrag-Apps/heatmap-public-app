@@ -144,12 +144,18 @@ if mode == "Urban Heat Risk":
             }, 'LST')
 
            
-                title="Land Surface Temperature (°C)",
-                labels=["< 0", "0–10", "10–20", "20–30", "30–40", "> 40"],
-               colors=["darkblue", "blue", "lightblue", "green", "orange", "red"]
-           )
+                
+
+               LST_catergories = {
+                           1: {"label": "Low", "color": "green"},
+                           2: {"label": "Medium", "color": "yellow"},
+                           3: {"label": "High", "color": "orange"},
+                           4: {"label": "Very High", "color": "red"},
+                           5: {"label": "Extreme", "color": "darkred"}
+                       }
 
 
+          
 
 
             st.markdown("""
