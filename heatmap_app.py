@@ -147,8 +147,8 @@ if mode == "Urban Heat Risk":
          
         if "utfvi" in st.session_state and show_utfvi:
             Map.addLayer(st.session_state.utfvi, {
-                'min': -0.1, 'max': 0.25,
-                'palette': ['blue', 'green', 'yellow', 'orange', 'red', 'red'],
+                'min': -0.4, 'max': 0.4,
+                'palette': ['blue', 'green', 'yellow', 'orange', 'red'],
                 'opacity': utfvi_opacity
             }, 'UTFVI')
 
