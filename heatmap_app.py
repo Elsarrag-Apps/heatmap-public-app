@@ -143,9 +143,9 @@ if mode == "Urban Heat Risk":
 
             Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
-           st.markdown("#### 🔍 LST Color Legend")
-              st.markdown("""
-              <div style="padding:10px">
+            st.markdown("#### 🔍 LST Color Legend")
+               st.markdown("""
+               <div style="padding:10px">
                 <div style="display:flex;flex-direction:column;font-size:14px">
                   <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
                   <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> 0–10°C</div>
