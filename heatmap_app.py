@@ -170,7 +170,7 @@ if mode == "Urban Heat Risk":
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 15–22.5°C</div>
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 22.5–30°C</div>
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 30–37.5°C</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 37.5-45°C</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 37.5-45°C</div>
               </div>
             </div>
           
@@ -182,7 +182,7 @@ if mode == "Urban Heat Risk":
               <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> &lt; 0 — Good</div>
               <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0–0.005 — Normal</div>
               <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.005–0.010 — Bad</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.010–0.015 — orse</div>
+              <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.010–0.015 — Worse</div>
               <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 0.015–0.020 — Worst</div>
              
             </div>
