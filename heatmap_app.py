@@ -154,12 +154,14 @@ if mode == "Urban Heat Risk":
 
         Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
-        st.markdown("#### 🔍 Map Legends")
-        st.markdown("""
-        <div style="display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-start; gap: 60px; margin-top: 10px;">
-          
+      
+        import streamlit.components.v1 as components
+
+        components.html("""
+          <div style="display: flex; gap: 60px; font-family: Arial, sans-serif; margin-top: 20px;">
+            
             <!-- LST Legend -->
-            <div style="flex: 1;">
+            <div>
               <h4 style="margin-bottom:5px">LST (°C)</h4>
               <div style="font-size:14px; line-height: 20px;">
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:darkblue;margin-right:6px;"></span> < 0°C</div>
@@ -172,7 +174,7 @@ if mode == "Urban Heat Risk":
             </div>
           
             <!-- UTFVI Legend -->
-            <div style="flex: 1;">
+            <div>
               <h4 style="margin-bottom:5px">UTFVI</h4>
               <div style="font-size:14px; line-height: 20px;">
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> ≤ -0.4</div>
@@ -184,11 +186,10 @@ if mode == "Urban Heat Risk":
             </div>
           
           </div>
-          """, unsafe_allow_html=True)
-          
-                  
-               
-          
+          """, height=240)
+                   
+                         
+                    
 
 
     with left_col.expander("Analysis Summary", expanded=True):
