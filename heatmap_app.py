@@ -141,7 +141,7 @@ if mode == "Urban Heat Risk":
                 'opacity': lst_opacity
             }, 'LST')
 
-            Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
+     #       Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
             st.markdown("#### 🔍 LST Color Legend")
             st.markdown("""
