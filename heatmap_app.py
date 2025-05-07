@@ -143,11 +143,14 @@ if mode == "Urban Heat Risk":
                 'opacity': lst_opacity
             }, 'LST')
 
-            Map.add_legend(
+           
                 title="Land Surface Temperature (°C)",
                 labels=["< 0", "0–10", "10–20", "20–30", "30–40", "> 40"],
                colors=["darkblue", "blue", "lightblue", "green", "orange", "red"]
            )
+
+
+
 
             st.markdown("""
            <div style="padding:10px">
