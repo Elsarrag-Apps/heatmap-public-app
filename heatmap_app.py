@@ -138,7 +138,7 @@ if mode == "Urban Heat Risk":
 
         if "lst" in st.session_state and show_lst:
             Map.addLayer(st.session_state.lst, {
-                'min': 0, 'max': 56,
+                'min': 0, 'max': 45,
                 'palette': ['darkblue', 'blue', 'lightblue', 'green', 'yellow', 'orange', 'red'],
                 'opacity': lst_opacity
             }, 'LST')
