@@ -69,8 +69,8 @@ if mode == "Urban Heat Risk":
         point = ee.Geometry.Point([lon, lat])
         aoi = point.buffer(buffer_radius)
 
-        start_date = f"{selected_year}-{'01-01' if date_range == 'Spring-Summer-Autumn (Apr to Sep)' else '05-01'}"
-        end_date = f"{selected_year}-{'12-31' if date_range == 'Spring-Summer-Autumn (Apr to Sep)' else '08-31'}"
+        start_date = f"{selected_year}-{'04-01' if date_range == 'Spring-Summer-Autumn (Apr to Sep)' else '06-01'}"
+        end_date = f"{selected_year}-{'09-30' if date_range == 'Spring-Summer-Autumn (Apr to Sep)' else '08-31'}"
 
         def cloud_mask(image):
             qa = image.select('QA_PIXEL')
