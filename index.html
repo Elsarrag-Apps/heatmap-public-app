@@ -1,13 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Urban Heat Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Urban Heat Risk Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f8fb;
+      color: #222;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .left {
+      flex: 1 1 480px;
+      padding: 20px;
+    }
+
+    .right {
+      flex: 1 1 480px;
+      text-align: center;
+    }
+
+    .logo {
+      max-height: 60px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .launch-button {
+      padding: 14px 30px;
+      font-size: 18px;
+      background-color: #2e6ef7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .launch-button:hover {
+      background-color: #1d4bd1;
+    }
+
+    .preview {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 20px;
+      }
+      .left, .right {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Urban Heat Dashboard</h1>
-  <p>Click below to launch the interactive Streamlit tool:</p>
-  <a href="https://heatmap-public-app-mraioecqk6jmnyeufsrop3.streamlit.app/" target="_blank">
-    <button style="padding: 10px 20px; font-size: 16px;">🚀 Launch Dashboard</button>
-  </a>
+
+  <div class="container">
+    <div class="left">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Heat_icon.png/240px-Heat_icon.png" class="logo" alt="Logo">
+      <h1>Urban Heat Risk Dashboard</h1>
+      <p>This interactive dashboard enables users to explore climate-related urban heat risk across UK regions. The map allows postcode-level insights into overheating vulnerability in buildings under different climate scenarios.</p>
+      <p>Users can examine location-specific overheating projections, building performance risk levels, and see the effect of passive and active mitigation strategies over time.</p>
+      <p>This tool is ideal for policy analysts, urban planners, and built environment professionals addressing climate adaptation and urban resilience.</p>
+      <a href="https://heatmap-public-app-mraioecqk6jmnyeufsrop3.streamlit.app/" target="_blank">
+        <button class="launch-button">🚀 Launch Dashboard</button>
+      </a>
+    </div>
+
+    <div class="right">
+      <img class="preview" src="https://i.imgur.com/WYjFJfq.png" alt="App Preview">
+    </div>
+  </div>
+
 </body>
 </html>
