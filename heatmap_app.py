@@ -21,16 +21,33 @@ with col1:
 mode = st.radio("Select View Mode", ["Building Overheating Risk", "Urban Heat Risk"], key="mode_selector")
 
 # EE auth
-try:
-    with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
-        json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
-        key_path = f.name
-    credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
-    ee.Initialize(credentials)
-except Exception:
-    st.error("Earth Engine authentication failed.")
-    st.stop()
+#try:
+   # with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
+   #     json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
+    #    key_path = f.name
+   # credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
+   # ee.Initialize(credentials)
+#except Exception:
+   # st.error("Earth Engine authentication failed.")
+   #st.stop()
 
+# ✅ Earth Engine authentication (fixed)
+try:
+    # Write the raw JSON key to a temporary file
+    with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
+        f.write(st.secrets["earthengine"]["private_key"])
+        key_path = f.name
+
+    # Authenticate and initialize Earth Engine
+    service_account = st.secrets["earthengine"]["service_account"]
+    credentials = ee.ServiceAccountCredentials(service_account, key_path)
+    ee.Initialize(credentials)
+
+    st.success("✅ Earth Engine authenticated successfully.")
+except Exception as e:
+    st.error(f"Earth Engine authentication failed: {e}")
+    st.stop()
+     
 # Geocoder
 geolocator = Nominatim(user_agent="geoapi")
 def geocode_with_retry(postcode, retries=3):
@@ -433,6 +450,7 @@ elif mode == "Building Overheating Risk":
 
 
     run_building_overheating_risk(left_col, right_col, Map)
+
 
 
 
