@@ -18,9 +18,13 @@ with col1:
 with col1:
     st.image("ukgbc_logo.png", width=70)
 
+# Mode selector
 mode = st.radio("Select View Mode", ["Building Overheating Risk", "Urban Heat Risk"], key="mode_selector")
 
-# ✅ Earth Engine authentication (fixed and stable)
+# ✅ Shared postcode input for both modes
+postcode = st.text_input("Enter UK Postcode:", value="SW1A 1AA", key="shared_postcode")
+
+# ✅ Earth Engine authentication (fixed)
 try:
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         f.write(st.secrets["earthengine"]["private_key"])
@@ -50,12 +54,11 @@ left_col, right_col = st.columns([1, 2])
 Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE', ee_initialize=False)
 
 # -------------------------------
-# MODE 1: Urban Heat Risk (verified)
+# MODE 1: Urban Heat Risk
 # -------------------------------
 if mode == "Urban Heat Risk":
     with left_col:
-        st.markdown("## 🏢 Urban Heat Island Risk Tool")
-        postcode = st.text_input("Enter UK Postcode:", value='SW1A 1AA', key="postcode_urban")
+        st.markdown("## 🏙️ Urban Heat Island Risk Tool")
         buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500, key="urban_buf")
         selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key="urban_year")
         date_range = st.selectbox("Date Range", ['Spring-Summer-Autumn (Apr to Sep)', 'Summer (June to Aug)'], key="urban_daterange")
@@ -135,7 +138,7 @@ if mode == "Urban Heat Risk":
 
         show_lst = st.checkbox("Show Land Surface Temperature - LST", value=True, key="show_lst")
         lst_opacity = st.slider("LST Opacity", 0.0, 1.0, 0.6, key="lst_opacity")
-        show_utfvi = st.checkbox("Show Urban Thermal Field Variance Index -  UTFVI", value=True, key="show_utfvi")
+        show_utfvi = st.checkbox("Show Urban Thermal Field Variance Index - UTFVI", value=True, key="show_utfvi")
         utfvi_opacity = st.slider("UTFVI Opacity", 0.0, 1.0, 0.6, key="utfvi_opacity")
 
         if "lst" in st.session_state and show_lst:
@@ -188,6 +191,7 @@ if mode == "Urban Heat Risk":
         if "ndvi_mean" in st.session_state:
             st.write(f"### Mean LST: {st.session_state.lst_mean:.2f} °C")
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
+
 # -------------------------------
 # MODE 2: Building Overheating Risk
 # -------------------------------
@@ -228,7 +232,7 @@ elif mode == "Building Overheating Risk":
         
         with left_col:
             st.markdown("## 🏢 Building Overheating Risk Tool")
-            postcode_b = st.text_input("Enter UK Postcode", value="SW1A 1AA", key="postcode_building")
+            postcode_b = postcode
             building_type = st.selectbox("Building Type", ["Low-Rise Residential", "High-Rise Residential", "Office","School", "Care Home", "Healthcare"], key="btype")
 
             age_band = st.selectbox("Age Band", ["Pre-1945", "1945–1970", "1970–2000", "2000–2020", "New Build"], key="ageband")
@@ -420,6 +424,7 @@ elif mode == "Building Overheating Risk":
 
 
     run_building_overheating_risk(left_col, right_col, Map)
+
 
 
 
