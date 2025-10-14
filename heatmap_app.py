@@ -14,40 +14,26 @@ st.set_page_config(page_title="Climate Resilience Tool", layout="wide")
 
 col1, col2 = st.columns([1, 1])
 with col1:
-     st.image("hoarelea_logo.png", width=120)
+    st.image("hoarelea_logo.png", width=120)
 with col1:
-       st.image("ukgbc_logo.png", width=70)
+    st.image("ukgbc_logo.png", width=70)
 
 mode = st.radio("Select View Mode", ["Building Overheating Risk", "Urban Heat Risk"], key="mode_selector")
 
-# EE auth
-#try:
-   # with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
-   #     json.dump(json.loads(st.secrets["earthengine"]["private_key"]), f)
-    #    key_path = f.name
-   # credentials = ee.ServiceAccountCredentials(st.secrets["earthengine"]["service_account"], key_path)
-   # ee.Initialize(credentials)
-#except Exception:
-   # st.error("Earth Engine authentication failed.")
-   #st.stop()
-
-# ✅ Earth Engine authentication (fixed)
+# ✅ Earth Engine authentication (fixed and stable)
 try:
-    # Write the raw JSON key to a temporary file
     with tempfile.NamedTemporaryFile(mode="w+", suffix=".json", delete=False) as f:
         f.write(st.secrets["earthengine"]["private_key"])
         key_path = f.name
 
-    # Authenticate and initialize Earth Engine
     service_account = st.secrets["earthengine"]["service_account"]
     credentials = ee.ServiceAccountCredentials(service_account, key_path)
     ee.Initialize(credentials)
-
     st.success("✅ Earth Engine authenticated successfully.")
 except Exception as e:
     st.error(f"Earth Engine authentication failed: {e}")
     st.stop()
-     
+
 # Geocoder
 geolocator = Nominatim(user_agent="geoapi")
 def geocode_with_retry(postcode, retries=3):
@@ -61,7 +47,7 @@ def geocode_with_retry(postcode, retries=3):
 
 # Layout
 left_col, right_col = st.columns([1, 2])
-Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
+Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE', ee_initialize=False)
 
 # -------------------------------
 # MODE 1: Urban Heat Risk (verified)
@@ -102,7 +88,7 @@ if mode == "Urban Heat Risk":
             .mean()
 
         ndvi = IC.normalizedDifference(['B5', 'B4']).rename('NDVI')
-        ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), geometry = aoi, scale = 30, maxPixels=1e9)
+        ndvi_stats = ndvi.reduceRegion(ee.Reducer.minMax().combine('mean', '', True), geometry=aoi, scale=30, maxPixels=1e9)
         ndvi_mean = ee.Number(ndvi_stats.get('NDVI_mean'))
         ndvi_min = ee.Number(ndvi_stats.get('NDVI_min'))
         ndvi_max = ee.Number(ndvi_stats.get('NDVI_max'))
@@ -115,10 +101,10 @@ if mode == "Urban Heat Risk":
             '(tb / (1 + (0.00115 * (tb / 0.48359547432)) * log(em))) - 273.15',
             {'tb': thermal.select('B10'), 'em': em}
         ).rename('LST')
-        lst_mean = lst.reduceRegion(ee.Reducer.mean(), geometry = aoi, scale = 30, maxPixels=1e9).get('LST')
+        lst_mean = lst.reduceRegion(ee.Reducer.mean(), geometry=aoi, scale=30, maxPixels=1e9).get('LST')
 
         utfvi = lst.subtract(ee.Image.constant(lst_mean)).divide(lst).rename('UTFVI')
-        utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), geometry = aoi, scale = 30, maxPixels=1e9).get('UTFVI')
+        utfvi_mean = utfvi.reduceRegion(ee.Reducer.mean(), geometry=aoi, scale=30, maxPixels=1e9).get('UTFVI')
 
         st.session_state.map_center = [lat, lon]
         st.session_state.lst = lst.clip(aoi)
@@ -137,7 +123,7 @@ if mode == "Urban Heat Risk":
 
     with right_col:
         st.markdown("### Heat Map Viewer")
-        Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE')
+        Map = geemap.Map(center=[51.5, -0.1], zoom=10, basemap='SATELLITE', ee_initialize=False)
 
         if "map_center" in st.session_state:
             Map.set_center(st.session_state.map_center[1], st.session_state.map_center[0], 16)
@@ -159,10 +145,6 @@ if mode == "Urban Heat Risk":
                 'opacity': lst_opacity
             }, 'LST')
 
-    
-                                 
-
-         
         if "utfvi" in st.session_state and show_utfvi:
             Map.addLayer(st.session_state.utfvi, {
                 'min': -0.005, 'max': 0.025,
@@ -172,12 +154,9 @@ if mode == "Urban Heat Risk":
 
         Map.to_streamlit(width=700, height=500, scrolling=True, add_layer_control=True)
 
-      
         import streamlit.components.v1 as components
-
         components.html("""
           <div style="display: flex; gap: 60px; font-family: Arial, sans-serif; margin-top: 20px;">
-            
             <!-- LST Legend -->
             <div>
               <h4 style="margin-bottom:5px">LST (°C)</h4>
@@ -190,34 +169,25 @@ if mode == "Urban Heat Risk":
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> 37.5-45°C</div>
               </div>
             </div>
-          
-           <!-- UTFVI Legend -->
-          <div>
-            <h4 style="margin-bottom:5px">UTFVI (Ecological Evaluation)</h4>
-            <div style="font-size:14px; line-height: 20px;">
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> <0 — Excellent</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 0–0.005 — Good</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0.005–0.010 — Normal</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.01–0.015 — Bad</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.015–0.02 — Worse</div>
-              <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 0.020 — Worst</div>
-             
+            <!-- UTFVI Legend -->
+            <div>
+              <h4 style="margin-bottom:5px">UTFVI (Ecological Evaluation)</h4>
+              <div style="font-size:14px; line-height: 20px;">
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> <0 — Excellent</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 0–0.005 — Good</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0.005–0.010 — Normal</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.01–0.015 — Bad</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.015–0.02 — Worse</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 0.020 — Worst</div>
+              </div>
             </div>
           </div>
-
-      
-               """, height=240)
-                   
-                         
-                    
-
+        """, height=240)
 
     with left_col.expander("Analysis Summary", expanded=True):
         if "ndvi_mean" in st.session_state:
-           # st.write(f"### Mean NDVI: {st.session_state.ndvi_mean:.2f}")
             st.write(f"### Mean LST: {st.session_state.lst_mean:.2f} °C")
             st.write(f"### Mean UTFVI: {st.session_state.utfvi_mean:.4f}")
-            #st.write(f"### Ecological Class: {st.session_state.utfvi_class}")
 # -------------------------------
 # MODE 2: Building Overheating Risk
 # -------------------------------
@@ -450,6 +420,7 @@ elif mode == "Building Overheating Risk":
 
 
     run_building_overheating_risk(left_col, right_col, Map)
+
 
 
 
