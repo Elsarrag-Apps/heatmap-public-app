@@ -408,11 +408,17 @@ elif mode == "Building Overheating Risk":
                      
 
                     st.markdown(f"""
-                    <div style='font-size:20px; font-weight:bold; margin-bottom:10px;'>
-                    🛑 Risk Level {level} – {label}<br>
-                    <span style='font-size:18px; font-weight:normal;'>{scenario}</span>
+                   <div style='display:flex;align-items:center;gap:8px;margin-bottom:8px;'>
+                      <div style='width:14px;height:14px;border-radius:50%;background-color:{color};'></div>
+                      <div style='font-size:20px;font-weight:bold;'>
+                        Risk Level {level} – {label}
+                      </div>
+                    </div>
+                    <div style='font-size:18px;font-weight:normal;margin-left:22px;'>
+                      {scenario}
                     </div>
                     """, unsafe_allow_html=True)
+                      
 
                     Map.set_center(lon_b, lat_b, 18)
                     circle = ee.Geometry.Point([lon_b, lat_b]).buffer(100)
@@ -424,6 +430,7 @@ elif mode == "Building Overheating Risk":
 
 
     run_building_overheating_risk(left_col, right_col, Map)
+
 
 
 
