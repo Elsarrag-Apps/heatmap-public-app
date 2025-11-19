@@ -372,35 +372,35 @@ elif mode == "Building Overheating Risk":
                     with st.expander("ℹ️ What do the Risk Levels mean?"):
                         if building_type == "Low-Rise Residential" or building_type == "High-Rise Residential":
                             st.markdown("""
-                            - **1 – Low**: 0–3 overheating days; meets TM59/TM52 thresholds  
+                            - **1 – Low**: 0–3 overheating days; meets TM52/TM59 thresholds  
                             - **2 – Medium**: 3–6 days above 28°C or adaptive limit  
                             - **3 – High**: 6–9 days; discomfort likely  
-                            - **4 – Very High**: 9–12 days or 4+ nights >27°C  
+                            - **4 – Very High**: 9–12 days >28°C  
                             - **5 – Extreme**: >12 days; health risk likely
                             """)
                         elif building_type == "Office":
                             st.markdown("""
-                            - **1 – Low**: Meets summer comfort criteria (Guide A)  
-                            - **2 – Medium**: Some hours >25°C; minor discomfort  
+                            - **1 – Low**: Meets summer comfort criteria TM52  
+                            - **2 – Medium**: 3-6 days >28°C; minor discomfort  
                             - **3 – High**: >6 days >28°C; productivity may decline  
                             - **4 – Very High**: Frequent discomfort, 9+ days affected  
                             - **5 – Extreme**: Over 12 days; critical indoor temps
                             """)
                         elif building_type == "School":
                             st.markdown("""
-                            - **1 – Low**: Within BB101 comfort standards  
-                            - **2 – Medium**: Some discomfort during teaching hours  
-                            - **3 – High**: 6+ overheating days; learning disrupted  
-                            - **4 – Very High**: >9 days above 28°C  
-                            - **5 – Extreme**: 12+ days; unsafe learning conditions
+                            - **1 – Low**: Within TM52/BB101 comfort standards  
+                            - **2 – Medium**: up to 4 days - Some discomfort during teaching hours  
+                            - **3 – High**: 4-7 days overheating days; learning disrupted  
+                            - **4 – Very High**: 7-9 days above 28°C  
+                            - **5 – Extreme**: 9+ days; unsafe learning conditions
                             """)
                         elif building_type == "Care Home" or building_type == "Healthcare":
                             st.markdown("""
                             - **1 – Low**: Safe and thermally comfortable  
-                            - **2 – Medium**: Minor discomfort for occupants  
-                            - **3 – High**: 6+ days above limits; health concern  
-                            - **4 – Very High**: Disruption to operations or patient comfort  
-                            - **5 – Extreme**: 12+ days; serious health risk
+                            - **2 – Medium**: 3-4 days Minor discomfort for occupants  
+                            - **3 – High**: 4-5 days above limits; health concern  
+                            - **4 – Very High**: 5-6 days Disruption to operations or patient comfort  
+                            - **5 – Extreme**: 6+ days; serious health risk
                             """)  
                       
                     
@@ -430,6 +430,7 @@ elif mode == "Building Overheating Risk":
 
 
     run_building_overheating_risk(left_col, right_col, Map)
+
 
 
 
