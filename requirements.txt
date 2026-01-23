@@ -1,6 +1,18 @@
-streamlit
-earthengine-api
-geemap
-folium
+#streamlit
+#earthengine-api
+#geemap
+#folium
+#geopy
+#setuptools
+streamlit==1.53.1
+earthengine-api>=0.1.390
+
+geemap==0.36.6
+folium>=0.15
+streamlit-folium>=0.20
+
+# These two are the key ones behind the BoxKeyError path:
+xyzservices<2025
+python-box~=7.0
+
 geopy
-setuptools
