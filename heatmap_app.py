@@ -60,7 +60,7 @@ if mode == "Urban Heat Risk":
     with left_col:
         st.markdown("## 🏙️ Urban Heat Island Risk Tool")
         buffer_radius = st.slider("Buffer radius (meters)", 100, 2000, 500, key="urban_buf")
-        selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2025)], key="urban_year")
+        selected_year = st.selectbox("Select Year", [str(y) for y in range(2013, 2026)], key="urban_year")
         date_range = st.selectbox("Date Range", ['Spring-Summer-Autumn (Apr to Sep)', 'Summer (June to Aug)'], key="urban_daterange")
         cloud_cover = st.slider("Cloud Cover Threshold (%)", 5, 50, 20, key="urban_cloud")
         run_analysis = st.button("Run Analysis", key="urban_run")
