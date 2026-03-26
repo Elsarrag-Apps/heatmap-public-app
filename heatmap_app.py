@@ -1,4 +1,5 @@
 import ee
+import math
 import geemap.foliumap as geemap
 import folium
 import tempfile
@@ -14,7 +15,8 @@ from geopy.distance import geodesic
 # -------------------------------
 st.set_page_config(page_title="Climate Resilience Tool", layout="wide")
 
-logo_col1, logo_col2 = st.columns([1, 1])
+# Logos close together
+logo_col1, logo_col2, _ = st.columns([0.12, 0.08, 0.80])
 with logo_col1:
     st.image("hoarelea_logo.png", width=120)
 with logo_col2:
@@ -273,12 +275,12 @@ if mode == "Urban Heat Risk":
             <div>
               <h4 style="margin-bottom:5px">UTFVI (Ecological Evaluation)</h4>
               <div style="font-size:14px; line-height: 20px;">
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> <0 — Excellent</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:blue;margin-right:6px;"></span> &lt;0 — Excellent</div>
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:green;margin-right:6px;"></span> 0–0.005 — Good</div>
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:yellow;margin-right:6px;"></span> 0.005–0.010 — Normal</div>
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:orange;margin-right:6px;"></span> 0.01–0.015 — Bad</div>
                 <div><span style="display:inline-block;width:15px;height:15px;background-color:orangered;margin-right:6px;"></span> 0.015–0.02 — Worse</div>
-                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> > 0.020 — Worst</div>
+                <div><span style="display:inline-block;width:15px;height:15px;background-color:red;margin-right:6px;"></span> &gt; 0.020 — Worst</div>
               </div>
             </div>
           </div>
@@ -440,7 +442,18 @@ elif mode == "Building Overheating Risk":
         # -------------------------------
         with right_col:
             st.markdown("### Risk Map")
-            Map = geemap.Map(center=[lat_b, lon_b], zoom=15, basemap='SATELLITE', ee_initialize=False)
+
+            # Tight postcode zoom so the overheating circle is visible
+            Map = geemap.Map(basemap='SATELLITE', ee_initialize=False)
+            Map.set_center(lon_b, lat_b, 18)
+
+            lat_pad = 0.0018
+            lon_pad = lat_pad / max(math.cos(math.radians(lat_b)), 0.1)
+
+            Map.fit_bounds([
+                [lat_b - lat_pad, lon_b - lon_pad],
+                [lat_b + lat_pad, lon_b + lon_pad]
+            ])
 
             Map.add_child(folium.Marker(
                 location=[lat_b, lon_b],
@@ -506,7 +519,7 @@ elif mode == "Building Overheating Risk":
                     location=[lat_b, lon_b],
                     radius=50,
                     color=color,
-                    weight=3,
+                    weight=4,
                     fill=True,
                     fill_color=color,
                     fill_opacity=0.4,
@@ -523,7 +536,7 @@ elif mode == "Building Overheating Risk":
                     location=[lat_b, lon_b],
                     radius=50,
                     color="blue",
-                    weight=2,
+                    weight=4,
                     fill=True,
                     fill_color="blue",
                     fill_opacity=0.2,
